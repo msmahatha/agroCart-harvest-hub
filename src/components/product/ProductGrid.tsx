@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { cn } from '@/lib/utils';
 import ProductCard from './ProductCard';
@@ -9,9 +8,10 @@ import { Skeleton } from '@/components/ui/skeleton';
 interface ProductGridProps {
   products: Product[];
   className?: string;
-  columns?: number;
+  columns?: number | { default: number; sm?: number; md?: number; lg?: number; xl?: number };
   loading?: boolean;
   emptyMessage?: string;
+  variant?: 'default' | 'horizontal';
 }
 
 const ProductGrid: React.FC<ProductGridProps> = ({
@@ -19,7 +19,8 @@ const ProductGrid: React.FC<ProductGridProps> = ({
   className,
   columns = 4,
   loading = false,
-  emptyMessage = "No products found"
+  emptyMessage = "No products found",
+  variant = 'default'
 }) => {
   const [displayProducts, setDisplayProducts] = useState<Product[]>([]);
 
@@ -28,14 +29,25 @@ const ProductGrid: React.FC<ProductGridProps> = ({
   }, [products]);
 
   const getGridCols = () => {
-    switch (columns) {
-      case 1: return "grid-cols-1";
-      case 2: return "grid-cols-1 sm:grid-cols-2";
-      case 3: return "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3";
-      case 4: return "grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4";
-      case 5: return "grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5";
-      case 6: return "grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6";
-      default: return "grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4";
+    if (typeof columns === 'number') {
+      switch (columns) {
+        case 1: return "grid-cols-1";
+        case 2: return "grid-cols-1 sm:grid-cols-2";
+        case 3: return "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3";
+        case 4: return "grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4";
+        case 5: return "grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5";
+        case 6: return "grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6";
+        default: return "grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4";
+      }
+    } else {
+      const colObj = columns as { default: number; sm?: number; md?: number; lg?: number; xl?: number };
+      const defaultCol = `grid-cols-${colObj.default}`;
+      const smCol = colObj.sm ? ` sm:grid-cols-${colObj.sm}` : '';
+      const mdCol = colObj.md ? ` md:grid-cols-${colObj.md}` : '';
+      const lgCol = colObj.lg ? ` lg:grid-cols-${colObj.lg}` : '';
+      const xlCol = colObj.xl ? ` xl:grid-cols-${colObj.xl}` : '';
+      
+      return `${defaultCol}${smCol}${mdCol}${lgCol}${xlCol}`;
     }
   };
 
@@ -79,6 +91,7 @@ const ProductGrid: React.FC<ProductGridProps> = ({
             <ProductCard 
               product={product} 
               isNew={index === 0 || index === 3}
+              variant={variant}
             />
           </motion.div>
         ))}
