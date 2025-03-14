@@ -5,14 +5,14 @@ import HeroSection from '@/components/ui/HeroSection';
 import { getFeaturedCategories } from '@/data/categories';
 import CategoryCard from '@/components/product/CategoryCard';
 import { useQuery } from '@tanstack/react-query';
-import { getProducts } from '@/data/products';
+import { getFeaturedProducts } from '@/data/products';
 import ProductGrid from '@/components/product/ProductGrid';
 import { motion } from 'framer-motion';
 
 const Index = () => {
   const { data: featuredProducts, isLoading } = useQuery({
     queryKey: ['featuredProducts'],
-    queryFn: () => getProducts({ featured: true, limit: 8 }),
+    queryFn: () => getFeaturedProducts(),
   });
 
   const featuredCategories = getFeaturedCategories();
