@@ -4,6 +4,9 @@ import { Link } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { Product } from '@/data/products';
 import { ProductImage, ProductPrice } from './ProductCardUtils';
+import { Button } from '@/components/ui/button';
+import { ShoppingCart } from 'lucide-react';
+import { useCart } from '@/context/CartContext';
 
 interface ProductCardCompactProps {
   product: Product;
@@ -16,6 +19,13 @@ const ProductCardCompact: React.FC<ProductCardCompactProps> = ({
   className,
   isNew = false
 }) => {
+  const { addToCart } = useCart();
+
+  const handleAddToCart = (e: React.MouseEvent) => {
+    e.preventDefault(); // Prevent navigation to product page
+    addToCart(product, 1);
+  };
+
   return (
     <Link 
       to={`/product/${product.slug}`}
@@ -36,6 +46,14 @@ const ProductCardCompact: React.FC<ProductCardCompactProps> = ({
             price={product.price} 
             salePrice={product.salePrice} 
           />
+          <Button
+            variant="outline"
+            size="icon"
+            className="h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+            onClick={handleAddToCart}
+          >
+            <ShoppingCart className="h-4 w-4" />
+          </Button>
         </div>
       </div>
     </Link>
