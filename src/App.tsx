@@ -13,6 +13,10 @@ import ForgotPasswordPage from "./pages/Auth/ForgotPasswordPage";
 import ProductDetailPage from "./pages/Product/ProductDetailPage";
 import ProductCatalogPage from "./pages/Product/ProductCatalogPage";
 import CartPage from "./pages/Cart/CartPage";
+import ProfilePage from "./pages/Profile/ProfilePage";
+import OrdersPage from "./pages/Profile/OrdersPage";
+import WishlistPage from "./pages/Profile/WishlistPage";
+import SettingsPage from "./pages/Profile/SettingsPage";
 import { CartProvider } from "./context/CartContext";
 import { AuthProvider } from "./context/AuthContext";
 
@@ -43,6 +47,12 @@ const App = () => (
                 
                 {/* Cart Routes */}
                 <Route path="/cart" element={<CartPage />} />
+                
+                {/* Profile Routes */}
+                <Route path="/profile" element={<ProfilePage />} />
+                <Route path="/orders" element={<OrdersPage />} />
+                <Route path="/wishlist" element={<WishlistPage />} />
+                <Route path="/settings" element={<SettingsPage />} />
                 
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />
