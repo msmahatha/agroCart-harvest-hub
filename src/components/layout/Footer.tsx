@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Leaf, Mail, MapPin, Phone } from 'lucide-react';
+import { Leaf, Mail, MapPin, Phone, CreditCard } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -123,11 +123,11 @@ const Footer = () => {
             <ul className="space-y-2">
               <li className="flex items-start text-sm text-muted-foreground">
                 <MapPin className="h-4 w-4 mr-2 mt-0.5" />
-                <span>123 Agriculture Road, Farmington, AG 12345</span>
+                <span>Barasat, Kazipara, West Bengal, India</span>
               </li>
               <li className="flex items-center text-sm text-muted-foreground">
                 <Phone className="h-4 w-4 mr-2" />
-                <span>+1 (555) 123-4567</span>
+                <span>+91 8918787936</span>
               </li>
               <li className="flex items-center text-sm text-muted-foreground">
                 <Mail className="h-4 w-4 mr-2" />
@@ -144,10 +144,41 @@ const Footer = () => {
             &copy; {new Date().getFullYear()} AgroCart. All rights reserved.
           </p>
           <div className="flex items-center space-x-4">
-            <img src="https://via.placeholder.com/40x25" alt="Visa" className="h-8" />
-            <img src="https://via.placeholder.com/40x25" alt="Mastercard" className="h-8" />
-            <img src="https://via.placeholder.com/40x25" alt="PayPal" className="h-8" />
-            <img src="https://via.placeholder.com/40x25" alt="UPI" className="h-8" />
+            <div className="h-8 w-12 bg-background border rounded shadow-sm flex items-center justify-center">
+              <svg viewBox="0 0 24 24" className="h-5 w-5 text-[#1434CB]" fill="currentColor">
+                <path d="M21.5824 13.0606H19.3315L18.6139 16.6752H16.4585L17.1761 13.0606H15.067V10.9442H17.6009L18.1366 8.16761H16.0276V6.05121H18.5615L19.2791 2.38672H21.4345L20.7639 6.05121H22.9669L23.6845 2.38672H25.8399L25.1223 6.05121H27.2737V8.16761H24.6828L24.1471 10.9442H26.2561V13.0606H23.7222L23.0046 16.7242H20.8493L21.5669 13.0606H19.3639" />
+                <path d="M11.2561 2.435V7.34885C11.2561 7.34885 9.8884 6.56428 8.37851 6.56428C5.62262 6.56428 3.14114 8.85322 3.14114 12.2957C3.14114 15.6894 5.57196 18.0273 8.42917 18.0273C10.0401 18.0273 11.3571 17.145 11.3571 17.145L11.297 22.0099C11.297 22.0099 9.98001 22.3573 8.33693 22.3573C3.92424 22.3573 0 18.6653 0 12.3937C0 6.36825 3.82285 2.38574 8.66467 2.38574C10.2254 2.38574 11.2561 2.435 11.2561 2.435Z" />
+              </svg>
+            </div>
+            <div className="h-8 w-12 bg-background border rounded shadow-sm flex items-center justify-center">
+              <svg viewBox="0 0 24 24" className="h-5 w-5 text-[#EB001B]" fill="currentColor">
+                <path d="M7.66667 2.16699H16.3333C19.095 2.16699 21.3333 4.40533 21.3333 7.16699V16.7503C21.3333 19.512 19.095 21.7503 16.3333 21.7503H7.66667C4.905 21.7503 2.66667 19.512 2.66667 16.7503V7.16699C2.66667 4.40533 4.905 2.16699 7.66667 2.16699Z" stroke="currentColor" fill="none" />
+                <path d="M12 17.5C15.0376 17.5 17.5 15.0376 17.5 12C17.5 8.96243 15.0376 6.5 12 6.5C8.96243 6.5 6.5 8.96243 6.5 12C6.5 15.0376 8.96243 17.5 12 17.5Z" stroke="currentColor" fill="none" />
+                <path d="M9.5 12C9.5 13.3807 10.6193 14.5 12 14.5C13.3807 14.5 14.5 13.3807 14.5 12C14.5 10.6193 13.3807 9.5 12 9.5C10.6193 9.5 9.5 10.6193 9.5 12Z" fill="currentColor" />
+              </svg>
+            </div>
+            <div className="h-8 w-12 bg-background border rounded shadow-sm flex items-center justify-center">
+              <svg viewBox="0 0 24 24" className="h-5 w-5 text-[#003087]" fill="currentColor">
+                <path d="M19.4955 7.12874H16.4573C15.524 7.12874 14.7251 7.9524 14.7251 8.90956V18.5618H17.1632C17.1632 18.5618 17.4363 18.5618 17.5728 18.3999C17.7092 18.2379 17.7092 17.9141 17.7092 17.9141V13.6761H19.4955C21.4256 13.6761 23 12.0152 23 10.4381C23 8.78956 21.4256 7.12874 19.4955 7.12874Z" />
+                <path d="M9.18458 7.12866H6.14646C5.21314 7.12866 4.41418 7.95233 4.41418 8.90948V18.5617H6.85231C6.85231 18.5617 7.12541 18.5617 7.26187 18.3998C7.39834 18.2379 7.39834 17.914 7.39834 17.914V13.6761H9.18458C11.1147 13.6761 12.6891 12.0152 12.6891 10.4381C12.6891 8.78948 11.1147 7.12866 9.18458 7.12866Z" />
+                <path d="M1 7.93297C1 6.76249 1.92435 5.81982 3.07392 5.81982C4.22349 5.81982 5.14785 6.76249 5.14785 7.93297C5.14785 9.10345 4.22349 10.0461 3.07392 10.0461C1.92435 10.0461 1 9.10345 1 7.93297Z" />
+              </svg>
+            </div>
+            <div className="h-8 w-12 bg-background border rounded shadow-sm flex items-center justify-center">
+              <svg viewBox="0 0 24 24" className="h-5 w-5 text-[#14BBEF]" fill="currentColor">
+                <path d="M3.33332 12.6667L4.06665 10.8667H9.13332L9.86665 12.6667H3.33332Z" />
+                <path d="M9.86668 12.6667L10.6 10.8667H15.6667L16.4 12.6667H9.86668Z" />
+                <path d="M16.4 12.6667L17.1333 10.8667H22.2L22.9333 12.6667H16.4Z" />
+                <path d="M17.3333 18.0001H15.6L16.5333 15.6667H18.2667L17.3333 18.0001Z" />
+                <path d="M3.33332 7.33325L4.06665 5.53325H9.13332L9.86665 7.33325H3.33332Z" />
+                <path d="M9.86668 7.33325L10.6 5.53325H15.6667L16.4 7.33325H9.86668Z" />
+                <path d="M16.4 7.33325L17.1333 5.53325H22.2L22.9333 7.33325H16.4Z" />
+                <path d="M10.8 18.0001H9.06665L9.99998 15.6667H11.7333L10.8 18.0001Z" />
+                <path d="M7.33332 15.6667L6.4 18.0001H4.66665L5.59998 15.6667H7.33332Z" />
+                <path d="M13.8667 15.6667L12.9333 18.0001H11.2L12.1333 15.6667H13.8667Z" />
+                <path d="M22.9333 7.33325L3.33332 7.33325L1 10.8666L3.33332 12.6666H22.9333L20.6 10.8666L22.9333 7.33325Z" />
+              </svg>
+            </div>
           </div>
         </div>
       </div>

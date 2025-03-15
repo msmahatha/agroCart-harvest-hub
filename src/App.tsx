@@ -17,6 +17,8 @@ import ProfilePage from "./pages/Profile/ProfilePage";
 import OrdersPage from "./pages/Profile/OrdersPage";
 import WishlistPage from "./pages/Profile/WishlistPage";
 import SettingsPage from "./pages/Profile/SettingsPage";
+import AboutPage from "./pages/About/AboutPage";
+import ContactPage from "./pages/Contact/ContactPage";
 import { CartProvider } from "./context/CartContext";
 import { AuthProvider } from "./context/AuthContext";
 
@@ -53,6 +55,10 @@ const App = () => (
                 <Route path="/orders" element={<OrdersPage />} />
                 <Route path="/wishlist" element={<WishlistPage />} />
                 <Route path="/settings" element={<SettingsPage />} />
+                
+                {/* Static Pages */}
+                <Route path="/about" element={<AboutPage />} />
+                <Route path="/contact" element={<ContactPage />} />
                 
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />

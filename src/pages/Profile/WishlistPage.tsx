@@ -1,38 +1,23 @@
 
 import React from 'react';
-import { useAuth } from '@/context/AuthContext';
 import { Card, CardHeader, CardContent } from '@/components/ui/card';
-import { Avatar } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { User, Package, Heart, Settings, Trash2, ShoppingCart } from 'lucide-react';
-import { Link, useLocation } from 'react-router-dom';
-import { cn } from '@/lib/utils';
+import { Heart, Trash2, ShoppingCart } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { products } from '@/data/products';
 import { toast } from 'sonner';
 import ProfileLayout from '@/components/profile/ProfileLayout';
 
 const WishlistPage: React.FC = () => {
-  const { user } = useAuth();
-  const location = useLocation();
+  // For demo purposes, we're showing a few products from the data
+  const wishlistItems = [
+    { ...products[2], addedOn: new Date('2023-09-15') }, // Advanced Irrigation Kit
+    { ...products[6], addedOn: new Date('2023-08-20') }, // Organic Tomato Seeds
+    { ...products[4], addedOn: new Date('2023-10-05') }  // Eco-Friendly Pest Control Spray
+  ];
 
-  // For demo purposes, just use a few random products from the data
-  const wishlistItems = products.slice(0, 3);
-
-  if (!user) {
-    return (
-      <div className="container mx-auto py-20 px-4">
-        <Card>
-          <CardContent className="flex flex-col items-center justify-center py-12">
-            <h2 className="text-2xl font-bold mb-4">You need to be logged in</h2>
-            <p className="text-muted-foreground mb-6">Please log in to view your wishlist</p>
-            <Link to="/login">
-              <Button>Log In</Button>
-            </Link>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
+  // USD to INR conversion rate (approximate)
+  const usdToInr = 83;
 
   const handleRemoveFromWishlist = (productId: string) => {
     toast.success("Item removed from wishlist");
@@ -66,14 +51,26 @@ const WishlistPage: React.FC = () => {
                             {product.name}
                           </Link>
                           <p className="text-sm text-muted-foreground">
-                            ${product.price.toFixed(2)}
+                            ₹{Math.round((product.salePrice || product.price) * usdToInr).toLocaleString('en-IN')}
+                            {product.salePrice && (
+                              <span className="ml-2 line-through text-muted-foreground/70">
+                                ₹{Math.round(product.price * usdToInr).toLocaleString('en-IN')}
+                              </span>
+                            )}
                           </p>
+                          {product.brand && (
+                            <p className="text-xs text-muted-foreground">Brand: {product.brand}</p>
+                          )}
                         </div>
                       </div>
                     </div>
                     <div className="p-4 md:text-center md:border-r border-border">
                       <p className="text-sm text-muted-foreground">Added on</p>
-                      <p className="font-medium">June 15, 2023</p>
+                      <p className="font-medium">{new Intl.DateTimeFormat('en-IN', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
+                      }).format(product.addedOn)}</p>
                     </div>
                     <div className="p-4 flex flex-row md:flex-col gap-2 justify-end md:items-center">
                       <Button 
