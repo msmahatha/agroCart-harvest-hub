@@ -6,7 +6,8 @@ import { useCart } from '@/context/CartContext';
 import { AnimatedButton } from '@/components/ui/AnimatedButton';
 import { 
   Search, ShoppingCart, UserRound, Menu, X, Heart, ChevronDown, 
-  LogOut, Package, Settings, Home, Leaf, Sprout, Wheat, Flower2
+  LogOut, Package, Settings, Home, Leaf, Sprout, Wheat, Flower2,
+  Info, Mail, LogIn, UserPlus, User
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -437,8 +438,5 @@ const Header: React.FC = () => {
     </header>
   );
 };
-
-// These imports are defined after the component to avoid circular dependencies
-import { Info, Mail, LogIn, UserPlus } from 'lucide-react';
 
 export default Header;
