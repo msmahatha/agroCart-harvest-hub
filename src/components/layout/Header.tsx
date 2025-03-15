@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
@@ -6,7 +5,7 @@ import { useAuth } from '@/context/AuthContext';
 import { useCart } from '@/context/CartContext';
 import { AnimatedButton } from '@/components/ui/AnimatedButton';
 import { 
-  Search, ShoppingCart, User, Menu, X, Heart, ChevronDown, 
+  Search, ShoppingCart, UserRound, Menu, X, Heart, ChevronDown, 
   LogOut, Package, Settings, Home, Leaf, Sprout, Wheat, Flower2
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -219,14 +218,10 @@ const Header: React.FC = () => {
               <div className="relative ml-1">
                 <button 
                   onClick={toggleUserMenu}
-                  className="p-1 rounded-full overflow-hidden border-2 border-transparent hover:border-primary/20 transition-all"
+                  className="p-2 rounded-md text-foreground/80 hover:text-primary hover:bg-primary/5 transition-colors"
                   aria-label="User menu"
                 >
-                  <img 
-                    src={user.avatar || 'https://i.pravatar.cc/150?img=33'} 
-                    alt={user.name} 
-                    className="h-7 w-7 rounded-full object-cover"
-                  />
+                  <UserRound className="h-5 w-5" />
                 </button>
                 
                 <AnimatePresence>

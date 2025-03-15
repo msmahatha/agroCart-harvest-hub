@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useCart } from '@/context/CartContext';
 import { 
@@ -21,19 +21,27 @@ const CartPage = () => {
   const { items, removeFromCart, updateQuantity, subtotal, itemCount, clearCart } = useCart();
   const { toast } = useToast();
   const navigate = useNavigate();
+  const [isProcessing, setIsProcessing] = useState(false);
 
   const handlePlaceOrder = () => {
-    // In a real app, this would send the order to a backend
-    toast({
-      title: "Order Placed Successfully!",
-      description: "Your order will be delivered in 3-5 business days.",
-    });
+    setIsProcessing(true);
     
-    // Clear the cart
-    clearCart();
-    
-    // Redirect to orders page
-    navigate('/orders');
+    // Simulate API call delay
+    setTimeout(() => {
+      // In a real app, this would send the order to a backend
+      toast({
+        title: "Order Placed Successfully!",
+        description: "Your order will be delivered in 3-5 business days.",
+      });
+      
+      // Clear the cart
+      clearCart();
+      
+      // Redirect to orders page
+      navigate('/orders');
+      
+      setIsProcessing(false);
+    }, 1000);
   };
 
   if (items.length === 0) {
@@ -203,9 +211,10 @@ const CartPage = () => {
                 className="w-full mt-6" 
                 size="lg"
                 onClick={handlePlaceOrder}
+                disabled={isProcessing}
               >
                 <ShoppingBag className="mr-2 h-4 w-4" />
-                Place Order
+                {isProcessing ? "Processing..." : "Place Order"}
               </Button>
               
               <div className="pt-4 text-xs text-center text-muted-foreground">

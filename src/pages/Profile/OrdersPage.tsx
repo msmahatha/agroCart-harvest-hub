@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { Card, CardHeader, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -10,7 +10,7 @@ import { format } from 'date-fns';
 import ProfileLayout from '@/components/profile/ProfileLayout';
 
 // Convert mock orders to use INR and realistic dates
-const mockOrders = [
+const defaultOrders = [
   {
     id: 'ORD7823691',
     date: new Date('2023-11-15'),
@@ -51,6 +51,22 @@ const mockOrders = [
 ];
 
 const OrdersPage: React.FC = () => {
+  const [orders, setOrders] = useState(defaultOrders);
+
+  useEffect(() => {
+    // Load any orders from localStorage that were placed through checkout
+    const storedOrders = localStorage.getItem('orders');
+    if (storedOrders) {
+      try {
+        const parsedOrders = JSON.parse(storedOrders);
+        // Combine with default orders
+        setOrders([...parsedOrders, ...defaultOrders]);
+      } catch (e) {
+        console.error("Failed to parse orders from localStorage", e);
+      }
+    }
+  }, []);
+
   return (
     <ProfileLayout title="My Orders">
       <Card>
@@ -58,9 +74,9 @@ const OrdersPage: React.FC = () => {
           <h2 className="text-2xl font-semibold">My Orders</h2>
         </CardHeader>
         <CardContent>
-          {mockOrders.length > 0 ? (
+          {orders.length > 0 ? (
             <div className="space-y-6">
-              {mockOrders.map((order) => (
+              {orders.map((order) => (
                 <Card key={order.id} className="overflow-hidden hover:border-primary/50 transition-colors">
                   <div className="grid grid-cols-1 md:grid-cols-5 items-center">
                     <div className="p-4 md:p-6 md:border-r border-border md:col-span-2">
@@ -71,7 +87,7 @@ const OrdersPage: React.FC = () => {
                         <div>
                           <p className="font-semibold">{order.id}</p>
                           <p className="text-sm text-muted-foreground">
-                            {format(order.date, 'MMM d, yyyy')}
+                            {format(new Date(order.date), 'MMM d, yyyy')}
                           </p>
                         </div>
                       </div>
