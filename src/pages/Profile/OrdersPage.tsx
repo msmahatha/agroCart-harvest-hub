@@ -3,7 +3,7 @@ import React from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { Card, CardHeader, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Eye, ShoppingBag } from 'lucide-react';
+import { Eye, ShoppingBag, IndianRupee } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
@@ -90,7 +90,10 @@ const OrdersPage: React.FC = () => {
                     </div>
                     <div className="p-4 text-center md:border-r border-border">
                       <p className="text-sm text-muted-foreground">Total</p>
-                      <p className="font-medium">₹{order.total.toLocaleString('en-IN')}</p>
+                      <p className="font-medium flex items-center justify-center">
+                        <IndianRupee className="h-3 w-3 mr-1" />
+                        {order.total.toLocaleString('en-IN')}
+                      </p>
                     </div>
                     <div className="p-4 md:pl-6 flex items-center justify-between md:col-span-1">
                       <div>

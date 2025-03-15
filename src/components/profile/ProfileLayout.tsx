@@ -2,9 +2,9 @@
 import React from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { Card, CardContent } from '@/components/ui/card';
-import { Avatar } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { User, Package, Heart, Settings } from 'lucide-react';
+import { User, Package, Heart, Settings, UserRound } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 
@@ -43,8 +43,10 @@ const ProfileLayout: React.FC<ProfileLayoutProps> = ({ children, title }) => {
           <Card className="sticky top-24">
             <CardContent className="p-6">
               <div className="flex flex-col items-center mb-6">
-                <Avatar className="h-24 w-24 mb-4 border-2 border-primary/20">
-                  <img src={user.avatar || 'https://i.pravatar.cc/150?img=33'} alt={user.name} />
+                <Avatar className="h-24 w-24 mb-4 border-2 border-primary/20 bg-primary/10">
+                  <AvatarFallback className="text-primary">
+                    <UserRound className="h-12 w-12" />
+                  </AvatarFallback>
                 </Avatar>
                 <h2 className="text-xl font-semibold">{user.name}</h2>
                 <p className="text-sm text-muted-foreground">{user.email}</p>

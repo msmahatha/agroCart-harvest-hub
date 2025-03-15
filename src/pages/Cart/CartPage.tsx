@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useCart } from '@/context/CartContext';
 import { 
   Trash2, 
@@ -8,15 +8,33 @@ import {
   Minus, 
   ArrowRight, 
   ShoppingCart, 
-  ShoppingBag
+  ShoppingBag,
+  IndianRupee
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { ProductImage } from '@/components/product/ProductCardUtils';
+import { useToast } from "@/components/ui/use-toast";
 
 const CartPage = () => {
-  const { items, removeFromCart, updateQuantity, subtotal, itemCount } = useCart();
+  const { items, removeFromCart, updateQuantity, subtotal, itemCount, clearCart } = useCart();
+  const { toast } = useToast();
+  const navigate = useNavigate();
+
+  const handlePlaceOrder = () => {
+    // In a real app, this would send the order to a backend
+    toast({
+      title: "Order Placed Successfully!",
+      description: "Your order will be delivered in 3-5 business days.",
+    });
+    
+    // Clear the cart
+    clearCart();
+    
+    // Redirect to orders page
+    navigate('/orders');
+  };
 
   if (items.length === 0) {
     return (
@@ -102,11 +120,15 @@ const CartPage = () => {
                       
                       <div className="text-right">
                         <div className="font-medium">
-                          ${((item.product.salePrice || item.product.price) * item.quantity).toFixed(2)}
+                          <span className="flex items-center">
+                            <IndianRupee className="h-3 w-3 mr-1" />
+                            {((item.product.salePrice || item.product.price) * item.quantity).toFixed(2)}
+                          </span>
                         </div>
                         {item.product.salePrice && (
-                          <div className="text-sm text-muted-foreground line-through">
-                            ${(item.product.price * item.quantity).toFixed(2)}
+                          <div className="text-sm text-muted-foreground line-through flex items-center">
+                            <IndianRupee className="h-3 w-3 mr-1" />
+                            {(item.product.price * item.quantity).toFixed(2)}
                           </div>
                         )}
                       </div>
@@ -136,40 +158,63 @@ const CartPage = () => {
             <CardContent className="p-6 space-y-4">
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Subtotal</span>
-                <span>${subtotal.toFixed(2)}</span>
+                <span className="flex items-center">
+                  <IndianRupee className="h-3 w-3 mr-1" />
+                  {subtotal.toFixed(2)}
+                </span>
               </div>
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Shipping</span>
-                <span>{subtotal >= 50 ? "Free" : "$5.00"}</span>
+                <span>{subtotal >= 500 ? "Free" : 
+                  <span className="flex items-center">
+                    <IndianRupee className="h-3 w-3 mr-1" />50.00
+                  </span>}
+                </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-muted-foreground">Tax</span>
-                <span>${(subtotal * 0.05).toFixed(2)}</span>
+                <span className="text-muted-foreground">Tax (GST)</span>
+                <span className="flex items-center">
+                  <IndianRupee className="h-3 w-3 mr-1" />
+                  {(subtotal * 0.05).toFixed(2)}
+                </span>
               </div>
 
               <Separator />
 
               <div className="flex justify-between font-medium text-lg">
                 <span>Total</span>
-                <span>
-                  ${(subtotal + (subtotal >= 50 ? 0 : 5) + (subtotal * 0.05)).toFixed(2)}
+                <span className="flex items-center">
+                  <IndianRupee className="h-4 w-4 mr-1" />
+                  {(subtotal + (subtotal >= 500 ? 0 : 50) + (subtotal * 0.05)).toFixed(2)}
                 </span>
               </div>
 
-              <Button className="w-full mt-6" size="lg" asChild>
-                <Link to="/checkout">
-                  <ShoppingBag className="mr-2 h-4 w-4" />
-                  Proceed to Checkout
-                </Link>
+              <div className="bg-muted p-3 rounded-md text-sm mt-4">
+                <div className="font-medium mb-1">Payment Method</div>
+                <div className="flex items-center gap-2">
+                  <span className="bg-primary/10 text-primary p-1 rounded-full">
+                    <IndianRupee className="h-4 w-4" />
+                  </span>
+                  Cash on Delivery
+                </div>
+              </div>
+
+              <Button 
+                className="w-full mt-6" 
+                size="lg"
+                onClick={handlePlaceOrder}
+              >
+                <ShoppingBag className="mr-2 h-4 w-4" />
+                Place Order
               </Button>
               
               <div className="pt-4 text-xs text-center text-muted-foreground">
                 <p>Secure checkout powered by trusted payment gateways</p>
                 <div className="flex justify-center space-x-2 mt-2">
-                  <img src="https://via.placeholder.com/40x25" alt="Visa" className="h-6" />
-                  <img src="https://via.placeholder.com/40x25" alt="Mastercard" className="h-6" />
-                  <img src="https://via.placeholder.com/40x25" alt="PayPal" className="h-6" />
-                  <img src="https://via.placeholder.com/40x25" alt="UPI" className="h-6" />
+                  <img src="/assets/visa.svg" alt="Visa" className="h-6" />
+                  <img src="/assets/mastercard.svg" alt="Mastercard" className="h-6" />
+                  <img src="/assets/paypal.svg" alt="PayPal" className="h-6" />
+                  <img src="/assets/upi.svg" alt="UPI" className="h-6" />
                 </div>
               </div>
             </CardContent>
