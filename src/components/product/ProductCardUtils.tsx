@@ -2,7 +2,7 @@
 import React from 'react';
 import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
-import { Star } from 'lucide-react';
+import { Star, IndianRupee } from 'lucide-react';
 import { Product } from '@/data/products';
 
 // Product Image component with badges
@@ -86,15 +86,24 @@ export const ProductPrice = ({
     {salePrice ? (
       <>
         <span className={cn("font-semibold", priceSizeLarge ? "text-lg" : "")}>
-          ${salePrice}
+          <span className="flex items-center">
+            <IndianRupee className="h-3 w-3 mr-1" />
+            {(salePrice * 83).toLocaleString('en-IN')}
+          </span>
         </span>
         <span className="text-muted-foreground line-through text-sm">
-          ${price}
+          <span className="flex items-center">
+            <IndianRupee className="h-3 w-3 mr-1" />
+            {(price * 83).toLocaleString('en-IN')}
+          </span>
         </span>
       </>
     ) : (
       <span className={cn("font-semibold", priceSizeLarge ? "text-lg" : "")}>
-        ${price}
+        <span className="flex items-center">
+          <IndianRupee className="h-3 w-3 mr-1" />
+          {(price * 83).toLocaleString('en-IN')}
+        </span>
       </span>
     )}
   </div>

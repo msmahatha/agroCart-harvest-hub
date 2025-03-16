@@ -16,6 +16,12 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({ subtotal, clearCart }) => {
   const { toast } = useToast();
   const navigate = useNavigate();
   const [isProcessing, setIsProcessing] = useState(false);
+  
+  // Convert USD to INR (approximate fixed rate)
+  const subtotalInINR = subtotal * 83;
+  const shippingCost = subtotalInINR >= 5000 ? 0 : 150;
+  const taxAmount = subtotalInINR * 0.18; // GST 18%
+  const total = subtotalInINR + shippingCost + taxAmount;
 
   const handlePlaceOrder = () => {
     setIsProcessing(true);
@@ -48,22 +54,23 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({ subtotal, clearCart }) => {
           <span className="text-muted-foreground">Subtotal</span>
           <span className="flex items-center">
             <IndianRupee className="h-3 w-3 mr-1" />
-            {subtotal.toFixed(2)}
+            {subtotalInINR.toLocaleString('en-IN')}
           </span>
         </div>
         <div className="flex justify-between">
           <span className="text-muted-foreground">Shipping</span>
-          <span>{subtotal >= 500 ? "Free" : 
+          <span>{subtotalInINR >= 5000 ? "Free" : 
             <span className="flex items-center">
-              <IndianRupee className="h-3 w-3 mr-1" />50.00
+              <IndianRupee className="h-3 w-3 mr-1" />
+              {shippingCost.toLocaleString('en-IN')}
             </span>}
           </span>
         </div>
         <div className="flex justify-between">
-          <span className="text-muted-foreground">Tax (GST)</span>
+          <span className="text-muted-foreground">Tax (GST 18%)</span>
           <span className="flex items-center">
             <IndianRupee className="h-3 w-3 mr-1" />
-            {(subtotal * 0.05).toFixed(2)}
+            {taxAmount.toLocaleString('en-IN', { maximumFractionDigits: 2 })}
           </span>
         </div>
 
@@ -73,7 +80,7 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({ subtotal, clearCart }) => {
           <span>Total</span>
           <span className="flex items-center">
             <IndianRupee className="h-4 w-4 mr-1" />
-            {(subtotal + (subtotal >= 500 ? 0 : 50) + (subtotal * 0.05)).toFixed(2)}
+            {total.toLocaleString('en-IN', { maximumFractionDigits: 2 })}
           </span>
         </div>
 

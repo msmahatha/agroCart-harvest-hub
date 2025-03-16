@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useCart } from '@/context/CartContext';
@@ -18,7 +17,8 @@ import {
   Shield, 
   Truck, 
   RotateCcw, 
-  HelpCircle
+  HelpCircle,
+  IndianRupee
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
@@ -49,6 +49,10 @@ const ProductDetailPage = () => {
 
   const discountPercentage = calculateDiscountPercentage(product);
   const relatedProducts = getProductsByCategory(product.categoryId).filter(p => p.id !== product.id).slice(0, 4);
+  
+  // Convert USD to INR (approximate fixed rate)
+  const priceInINR = product.price * 83;
+  const salePriceInINR = product.salePrice ? product.salePrice * 83 : null;
 
   const decrementQuantity = () => {
     if (quantity > 1) {
@@ -145,13 +149,22 @@ const ProductDetailPage = () => {
             </div>
 
             <div className="flex items-baseline space-x-2">
-              {product.salePrice ? (
+              {salePriceInINR ? (
                 <>
-                  <span className="text-2xl font-semibold">${product.salePrice.toFixed(2)}</span>
-                  <span className="text-lg text-muted-foreground line-through">${product.price.toFixed(2)}</span>
+                  <span className="text-2xl font-semibold flex items-center">
+                    <IndianRupee className="h-5 w-5 mr-1" />
+                    {salePriceInINR.toLocaleString('en-IN')}
+                  </span>
+                  <span className="text-lg text-muted-foreground line-through flex items-center">
+                    <IndianRupee className="h-4 w-4 mr-1" />
+                    {priceInINR.toLocaleString('en-IN')}
+                  </span>
                 </>
               ) : (
-                <span className="text-2xl font-semibold">${product.price.toFixed(2)}</span>
+                <span className="text-2xl font-semibold flex items-center">
+                  <IndianRupee className="h-5 w-5 mr-1" />
+                  {priceInINR.toLocaleString('en-IN')}
+                </span>
               )}
             </div>
 
@@ -216,7 +229,7 @@ const ProductDetailPage = () => {
                 <Truck className="h-5 w-5 text-muted-foreground" />
                 <div>
                   <p className="text-sm font-medium">Free shipping</p>
-                  <p className="text-xs text-muted-foreground">On orders over $50</p>
+                  <p className="text-xs text-muted-foreground">On orders over ₹5,000</p>
                 </div>
               </div>
               <div className="flex items-start space-x-2">
@@ -310,7 +323,7 @@ const ProductDetailPage = () => {
               <ul className="list-disc pl-5 space-y-1 text-muted-foreground">
                 <li>Standard Shipping: 3-5 business days</li>
                 <li>Express Shipping: 1-2 business days</li>
-                <li>Free shipping on orders over $50</li>
+                <li>Free shipping on orders over ₹5,000</li>
                 <li>International shipping available to select countries</li>
               </ul>
             </div>

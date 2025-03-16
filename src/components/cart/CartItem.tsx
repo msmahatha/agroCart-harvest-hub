@@ -16,6 +16,10 @@ const CartItem: React.FC<CartItemProps> = ({
   removeFromCart, 
   updateQuantity 
 }) => {
+  // Convert to INR
+  const priceInINR = item.product.price * 83;
+  const salePriceInINR = item.product.salePrice ? item.product.salePrice * 83 : null;
+  
   return (
     <div className="p-4 flex flex-col sm:flex-row gap-4">
       <div className="sm:w-20 sm:h-20 rounded-md overflow-hidden">
@@ -72,13 +76,13 @@ const CartItem: React.FC<CartItemProps> = ({
             <div className="font-medium">
               <span className="flex items-center">
                 <IndianRupee className="h-3 w-3 mr-1" />
-                {((item.product.salePrice || item.product.price) * item.quantity).toFixed(2)}
+                {((salePriceInINR || priceInINR) * item.quantity).toLocaleString('en-IN')}
               </span>
             </div>
             {item.product.salePrice && (
               <div className="text-sm text-muted-foreground line-through flex items-center">
                 <IndianRupee className="h-3 w-3 mr-1" />
-                {(item.product.price * item.quantity).toFixed(2)}
+                {(priceInINR * item.quantity).toLocaleString('en-IN')}
               </div>
             )}
           </div>
