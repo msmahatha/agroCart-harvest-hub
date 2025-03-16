@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { Card, CardContent } from '@/components/ui/card';
@@ -11,9 +10,11 @@ import { cn } from '@/lib/utils';
 interface ProfileLayoutProps {
   children: React.ReactNode;
   title: string;
+  description?: string;
+  action?: React.ReactNode;
 }
 
-const ProfileLayout: React.FC<ProfileLayoutProps> = ({ children, title }) => {
+const ProfileLayout: React.FC<ProfileLayoutProps> = ({ children, title, description, action }) => {
   const { user } = useAuth();
   const location = useLocation();
 
@@ -35,7 +36,13 @@ const ProfileLayout: React.FC<ProfileLayoutProps> = ({ children, title }) => {
 
   return (
     <div className="container mx-auto py-20 px-4">
-      <h1 className="text-3xl font-display font-bold mb-8">My Account</h1>
+      <div className="flex items-center justify-between mb-8">
+        <div>
+          <h1 className="text-3xl font-display font-bold mb-1">{title}</h1>
+          {description && <p className="text-muted-foreground">{description}</p>}
+        </div>
+        {action && <div>{action}</div>}
+      </div>
       
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
         {/* Sidebar */}
