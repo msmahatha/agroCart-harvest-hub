@@ -32,6 +32,7 @@ const CartPage = () => {
           <OrderSummary 
             subtotal={subtotal}
             clearCart={clearCart}
+            items={items}
           />
         </div>
       </div>
