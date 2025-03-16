@@ -9,49 +9,17 @@ import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
 import ProfileLayout from '@/components/profile/ProfileLayout';
 
-// Convert mock orders to use INR and realistic dates
-const defaultOrders = [
-  {
-    id: 'ORD7823691',
-    date: new Date('2023-11-15'),
-    total: 9499,
-    status: 'Delivered',
-    items: 3,
-    products: [
-      "Premium Wheat Seeds",
-      "Organic Compost Fertilizer",
-      "Mini Cultivator Machine"
-    ]
-  },
-  {
-    id: 'ORD5439018',
-    date: new Date('2023-09-28'),
-    total: 3749,
-    status: 'Processing',
-    items: 2,
-    products: [
-      "Professional Pruning Shears",
-      "Eco-Friendly Pest Control Spray"
-    ]
-  },
-  {
-    id: 'ORD2176459',
-    date: new Date('2023-07-10'),
-    total: 12450,
-    status: 'Delivered',
-    items: 5,
-    products: [
-      "Advanced Irrigation Kit",
-      "Organic Tomato Seeds",
-      "Premium Garden Tool Set",
-      "Premium Wheat Seeds",
-      "Eco-Friendly Pest Control Spray"
-    ]
-  },
-];
+interface Order {
+  id: string;
+  date: Date;
+  total: number;
+  status: string;
+  items: number;
+  products: string[];
+}
 
 const OrdersPage: React.FC = () => {
-  const [orders, setOrders] = useState(defaultOrders);
+  const [orders, setOrders] = useState<Order[]>([]);
 
   useEffect(() => {
     // Load any orders from localStorage that were placed through checkout
@@ -59,8 +27,12 @@ const OrdersPage: React.FC = () => {
     if (storedOrders) {
       try {
         const parsedOrders = JSON.parse(storedOrders);
-        // Combine with default orders
-        setOrders([...parsedOrders, ...defaultOrders]);
+        // Convert string dates to Date objects
+        const formattedOrders = parsedOrders.map((order: any) => ({
+          ...order,
+          date: new Date(order.date)
+        }));
+        setOrders(formattedOrders);
       } catch (e) {
         console.error("Failed to parse orders from localStorage", e);
       }
