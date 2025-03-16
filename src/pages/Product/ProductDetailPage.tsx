@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useCart } from '@/context/CartContext';
+import { useWishlist } from '@/context/WishlistContext';
 import { 
   getProductBySlug, 
   getProductsByCategory, 
@@ -30,6 +31,7 @@ import ProductGrid from '@/components/product/ProductGrid';
 const ProductDetailPage = () => {
   const { slug } = useParams<{ slug: string }>();
   const { addToCart } = useCart();
+  const { toggleWishlist, isInWishlist } = useWishlist();
   const [quantity, setQuantity] = useState(1);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
 
@@ -47,12 +49,12 @@ const ProductDetailPage = () => {
     );
   }
 
-  const discountPercentage = calculateDiscountPercentage(product);
-  const relatedProducts = getProductsByCategory(product.categoryId).filter(p => p.id !== product.id).slice(0, 4);
+  const discountPercentage = calculateDiscountPercentage(product!);
+  const relatedProducts = getProductsByCategory(product!.categoryId).filter(p => p.id !== product!.id).slice(0, 4);
   
   // Convert USD to INR (approximate fixed rate)
-  const priceInINR = product.price * 83;
-  const salePriceInINR = product.salePrice ? product.salePrice * 83 : null;
+  const priceInINR = product!.price * 83;
+  const salePriceInINR = product!.salePrice ? product!.salePrice * 83 : null;
 
   const decrementQuantity = () => {
     if (quantity > 1) {
@@ -61,17 +63,23 @@ const ProductDetailPage = () => {
   };
 
   const incrementQuantity = () => {
-    if (quantity < product.stock) {
+    if (quantity < product!.stock) {
       setQuantity(quantity + 1);
     }
   };
 
   const handleAddToCart = () => {
-    addToCart(product, quantity);
+    addToCart(product!, quantity);
+  };
+
+  const handleToggleWishlist = () => {
+    toggleWishlist(product!);
   };
 
   // Use the gallery or fall back to the main image
-  const images = product.gallery || [product.image];
+  const images = product!.gallery || [product!.image];
+
+  const isWishlisted = isInWishlist(product!.id);
 
   return (
     <div className="container mx-auto px-4 py-8 mt-16">
@@ -214,9 +222,13 @@ const ProductDetailPage = () => {
                 <ShoppingCart className="mr-2 h-4 w-4" />
                 Add to Cart
               </Button>
-              <Button variant="secondary" className="flex-1 sm:flex-none">
-                <Heart className="mr-2 h-4 w-4" />
-                Add to Wishlist
+              <Button 
+                variant="secondary" 
+                className="flex-1 sm:flex-none"
+                onClick={handleToggleWishlist}
+              >
+                <Heart className={`mr-2 h-4 w-4 ${isWishlisted ? "fill-red-500 text-red-500" : ""}`} />
+                {isWishlisted ? "Remove from Wishlist" : "Add to Wishlist"}
               </Button>
               <Button variant="outline" size="icon">
                 <Share2 className="h-4 w-4" />

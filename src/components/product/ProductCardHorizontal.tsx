@@ -3,8 +3,9 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { Product } from '@/data/products';
-import { ShoppingCart } from 'lucide-react';
+import { ShoppingCart, Heart } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
+import { useWishlist } from '@/context/WishlistContext'; 
 import { ProductImage, ProductPrice, ProductRating } from './ProductCardUtils';
 
 interface ProductCardHorizontalProps {
@@ -23,12 +24,21 @@ const ProductCardHorizontal: React.FC<ProductCardHorizontalProps> = ({
   isNew = false
 }) => {
   const { addToCart } = useCart();
+  const { toggleWishlist, isInWishlist } = useWishlist();
   
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
     addToCart(product);
   };
+
+  const handleWishlist = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    toggleWishlist(product);
+  };
+
+  const isWishlisted = isInWishlist(product.id);
 
   return (
     <Link 
@@ -58,14 +68,22 @@ const ProductCardHorizontal: React.FC<ProductCardHorizontalProps> = ({
             price={product.price} 
             salePrice={product.salePrice} 
           />
-          {showAddToCart && (
+          <div className="flex space-x-2">
+            {showAddToCart && (
+              <button 
+                onClick={handleAddToCart}
+                className="p-2 rounded-full bg-primary/10 text-primary hover:bg-primary hover:text-white transition-colors"
+              >
+                <ShoppingCart size={18} />
+              </button>
+            )}
             <button 
-              onClick={handleAddToCart}
+              onClick={handleWishlist}
               className="p-2 rounded-full bg-primary/10 text-primary hover:bg-primary hover:text-white transition-colors"
             >
-              <ShoppingCart size={18} />
+              <Heart size={18} className={isWishlisted ? "fill-red-500 text-red-500" : ""} />
             </button>
-          )}
+          </div>
         </div>
       </div>
     </Link>

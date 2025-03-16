@@ -6,6 +6,7 @@ import { Product } from '@/data/products';
 import { motion } from 'framer-motion';
 import { ShoppingCart, Heart } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
+import { useWishlist } from '@/context/WishlistContext';
 import { ProductImage, ProductPrice, ProductRating } from './ProductCardUtils';
 
 interface ProductCardDefaultProps {
@@ -24,8 +25,8 @@ const ProductCardDefault: React.FC<ProductCardDefaultProps> = ({
   isNew = false
 }) => {
   const { addToCart } = useCart();
+  const { toggleWishlist, isInWishlist } = useWishlist();
   const [isHovered, setIsHovered] = React.useState(false);
-  const [isWishlisted, setIsWishlisted] = React.useState(false);
   
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -36,8 +37,10 @@ const ProductCardDefault: React.FC<ProductCardDefaultProps> = ({
   const handleWishlist = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    setIsWishlisted(!isWishlisted);
+    toggleWishlist(product);
   };
+
+  const isWishlisted = isInWishlist(product.id);
 
   return (
     <motion.div
