@@ -3,6 +3,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { User, Package, Heart, Settings, LogOut, UserRound } from 'lucide-react';
+import { AnimatedButton } from '@/components/ui/AnimatedButton';
 
 interface UserMenuProps {
   user: { name: string; email: string } | null;
@@ -17,8 +18,25 @@ const UserMenu: React.FC<UserMenuProps> = ({
   setUserMenuOpen,
   logout
 }) => {
-  if (!user) return null;
+  // If no user is logged in, show login/signup buttons
+  if (!user) {
+    return (
+      <div className="hidden md:flex items-center space-x-2">
+        <Link to="/login">
+          <AnimatedButton variant="outline" size="sm">
+            Log In
+          </AnimatedButton>
+        </Link>
+        <Link to="/signup">
+          <AnimatedButton variant="default" size="sm">
+            Sign Up
+          </AnimatedButton>
+        </Link>
+      </div>
+    );
+  }
   
+  // If user is logged in, show the user menu
   return (
     <div className="relative ml-1">
       <button 

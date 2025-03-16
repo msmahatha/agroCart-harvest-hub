@@ -2,7 +2,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Search, ShoppingCart, Menu, X } from 'lucide-react';
-import { AnimatedButton } from '@/components/ui/AnimatedButton';
 import UserMenu from './UserMenu';
 
 interface HeaderActionsProps {
@@ -50,23 +49,13 @@ const HeaderActions: React.FC<HeaderActionsProps> = ({
         )}
       </Link>
       
-      {/* User Menu */}
-      {user ? (
-        <UserMenu 
-          user={user}
-          userMenuOpen={userMenuOpen}
-          setUserMenuOpen={setUserMenuOpen}
-          logout={logout}
-        />
-      ) : (
-        <div className="hidden md:block ml-4">
-          <Link to="/login">
-            <AnimatedButton variant="outline" size="sm">
-              Log In
-            </AnimatedButton>
-          </Link>
-        </div>
-      )}
+      {/* User Menu or Login/Signup Buttons */}
+      <UserMenu 
+        user={user}
+        userMenuOpen={userMenuOpen}
+        setUserMenuOpen={setUserMenuOpen}
+        logout={logout}
+      />
       
       {/* Mobile Menu Toggle */}
       <button 

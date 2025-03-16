@@ -32,8 +32,8 @@ const mockUser = {
 };
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  // For demo, we'll always be logged in initially
-  const [user, setUser] = useState(mockUser);
+  // Start with null user (nobody logged in)
+  const [user, setUser] = useState<AuthContextProps["user"]>(null);
   const { toast } = useToast();
 
   const login = async (email: string, password: string): Promise<boolean> => {
