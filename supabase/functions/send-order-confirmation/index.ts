@@ -17,6 +17,9 @@ interface OrderDetails {
   total: number;
   userEmail: string;
   userName: string;
+  shipping?: number;
+  tax?: number;
+  subtotal?: number;
 }
 
 serve(async (req) => {
@@ -34,7 +37,7 @@ serve(async (req) => {
     const resend = new Resend(RESEND_API_KEY);
 
     // Get request body
-    const { items, orderId, total, userEmail, userName } = await req.json() as OrderDetails;
+    const { items, orderId, total, userEmail, userName, shipping = 0, tax = 0, subtotal } = await req.json() as OrderDetails;
 
     if (!items || !orderId || !total || !userEmail) {
       return new Response(
@@ -106,8 +109,20 @@ serve(async (req) => {
                 </tbody>
                 <tfoot>
                   <tr>
-                    <td colspan="3" style="padding: 10px; text-align: right; font-weight: bold;">Order Total:</td>
-                    <td style="padding: 10px; text-align: right; font-weight: bold;">₹${total.toFixed(2)}</td>
+                    <td colspan="3" style="padding: 10px; text-align: right; font-weight: bold;">Subtotal:</td>
+                    <td style="padding: 10px; text-align: right; font-weight: bold;">₹${subtotal?.toFixed(2) || total.toFixed(2)}</td>
+                  </tr>
+                  <tr>
+                    <td colspan="3" style="padding: 10px; text-align: right;">Shipping:</td>
+                    <td style="padding: 10px; text-align: right;">₹${shipping.toFixed(2)}</td>
+                  </tr>
+                  <tr>
+                    <td colspan="3" style="padding: 10px; text-align: right;">Tax:</td>
+                    <td style="padding: 10px; text-align: right;">₹${tax.toFixed(2)}</td>
+                  </tr>
+                  <tr>
+                    <td colspan="3" style="padding: 10px; text-align: right; font-weight: bold; border-top: 2px solid #eee;">Order Total:</td>
+                    <td style="padding: 10px; text-align: right; font-weight: bold; border-top: 2px solid #eee;">₹${total.toFixed(2)}</td>
                   </tr>
                 </tfoot>
               </table>

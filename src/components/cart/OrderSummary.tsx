@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
-import { ShoppingBag, Truck, IndianRupee, CreditCard, Trash } from 'lucide-react';
+import { ShoppingBag, Truck, IndianRupee, Trash } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import OrderConfirmationDialog from './OrderConfirmationDialog';
 import { supabase } from '@/integrations/supabase/client';
@@ -63,6 +63,9 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
           items,
           orderId: generatedOrderId,
           total,
+          subtotal,
+          shipping,
+          tax,
           userEmail,
           userName
         }
@@ -72,6 +75,7 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
         console.error('Error sending order confirmation:', error);
         toast.error("Failed to send order confirmation");
       } else {
+        toast.success("Order confirmation sent to your email");
         // Show confirmation dialog
         setShowConfirmation(true);
         // Clear cart
