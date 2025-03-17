@@ -75,9 +75,9 @@ serve(async (req) => {
       )
       .join("");
 
-    // Send email
+    // Send email using onboarding@resend.dev which is allowed for all accounts
     const { data, error } = await resend.emails.send({
-      from: "AgroCart <orders@agrocart.com>",
+      from: "AgroCart <onboarding@resend.dev>",
       to: userEmail,
       subject: `Order Confirmation #${orderId}`,
       html: `
