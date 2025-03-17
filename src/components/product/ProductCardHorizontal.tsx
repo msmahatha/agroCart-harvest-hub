@@ -3,9 +3,8 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { Product } from '@/data/products';
-import { ShoppingCart, Heart } from 'lucide-react';
+import { ShoppingCart, MoveRight } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
-import { useWishlist } from '@/context/WishlistContext'; 
 import { ProductImage, ProductPrice, ProductRating } from './ProductCardUtils';
 
 interface ProductCardHorizontalProps {
@@ -24,7 +23,6 @@ const ProductCardHorizontal: React.FC<ProductCardHorizontalProps> = ({
   isNew = false
 }) => {
   const { addToCart } = useCart();
-  const { toggleWishlist, isInWishlist } = useWishlist();
   
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -32,13 +30,13 @@ const ProductCardHorizontal: React.FC<ProductCardHorizontalProps> = ({
     addToCart(product);
   };
 
-  const handleWishlist = (e: React.MouseEvent) => {
+  const handleBuyNow = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    toggleWishlist(product);
+    addToCart(product);
+    // Navigate to cart page
+    window.location.href = '/cart';
   };
-
-  const isWishlisted = isInWishlist(product.id);
 
   return (
     <Link 
@@ -78,10 +76,10 @@ const ProductCardHorizontal: React.FC<ProductCardHorizontalProps> = ({
               </button>
             )}
             <button 
-              onClick={handleWishlist}
+              onClick={handleBuyNow}
               className="p-2 rounded-full bg-primary/10 text-primary hover:bg-primary hover:text-white transition-colors"
             >
-              <Heart size={18} className={isWishlisted ? "fill-red-500 text-red-500" : ""} />
+              <MoveRight size={18} />
             </button>
           </div>
         </div>

@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useCart } from '@/context/CartContext';
-import { useWishlist } from '@/context/WishlistContext';
 import { 
   getProductBySlug, 
   getProductsByCategory, 
@@ -10,8 +9,7 @@ import {
 import { 
   ChevronRight, 
   Leaf, 
-  ShoppingCart, 
-  Heart, 
+  ShoppingCart,
   Share2, 
   Plus, 
   Minus, 
@@ -19,7 +17,8 @@ import {
   Truck, 
   RotateCcw, 
   HelpCircle,
-  IndianRupee
+  IndianRupee,
+  MoveRight
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
@@ -31,7 +30,6 @@ import ProductGrid from '@/components/product/ProductGrid';
 const ProductDetailPage = () => {
   const { slug } = useParams<{ slug: string }>();
   const { addToCart } = useCart();
-  const { toggleWishlist, isInWishlist } = useWishlist();
   const [quantity, setQuantity] = useState(1);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
 
@@ -72,14 +70,13 @@ const ProductDetailPage = () => {
     addToCart(product!, quantity);
   };
 
-  const handleToggleWishlist = () => {
-    toggleWishlist(product!);
+  const handleBuyNow = () => {
+    addToCart(product!, quantity);
+    window.location.href = '/cart';
   };
 
   // Use the gallery or fall back to the main image
   const images = product!.gallery || [product!.image];
-
-  const isWishlisted = isInWishlist(product!.id);
 
   return (
     <div className="container mx-auto px-4 py-8 mt-16">
@@ -225,10 +222,10 @@ const ProductDetailPage = () => {
               <Button 
                 variant="secondary" 
                 className="flex-1 sm:flex-none"
-                onClick={handleToggleWishlist}
+                onClick={handleBuyNow}
               >
-                <Heart className={`mr-2 h-4 w-4 ${isWishlisted ? "fill-red-500 text-red-500" : ""}`} />
-                {isWishlisted ? "Remove from Wishlist" : "Add to Wishlist"}
+                <MoveRight className="mr-2 h-4 w-4" />
+                Buy Now
               </Button>
               <Button variant="outline" size="icon">
                 <Share2 className="h-4 w-4" />
