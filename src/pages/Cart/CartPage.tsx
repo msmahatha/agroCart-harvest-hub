@@ -10,6 +10,15 @@ const CartPage = () => {
   const { items, removeFromCart, updateQuantity, subtotal, itemCount, clearCart } = useCart();
   const { user } = useAuth();
 
+  // Transform cart items to the format expected by OrderSummary
+  const orderItems = items.map(item => ({
+    id: item.product.id,
+    name: item.product.name,
+    price: (item.product.salePrice || item.product.price) * 83, // Convert to INR
+    image: item.product.image,
+    quantity: item.quantity
+  }));
+
   if (items.length === 0) {
     return <EmptyCart />;
   }
@@ -34,7 +43,7 @@ const CartPage = () => {
           <OrderSummary 
             subtotal={subtotal}
             clearCart={clearCart}
-            items={items}
+            items={orderItems}
             userEmail={user?.email}
             userName={user?.name}
           />
