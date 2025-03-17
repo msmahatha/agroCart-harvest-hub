@@ -1,7 +1,8 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Search, ShoppingCart, Menu, X } from 'lucide-react';
+import { Menu, Search, ShoppingCart, X } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
 import UserMenu from './UserMenu';
 
 interface HeaderActionsProps {
@@ -13,6 +14,7 @@ interface HeaderActionsProps {
   userMenuOpen: boolean;
   setUserMenuOpen: (open: boolean) => void;
   logout: () => void;
+  loading?: boolean;
 }
 
 const HeaderActions: React.FC<HeaderActionsProps> = ({
@@ -23,13 +25,14 @@ const HeaderActions: React.FC<HeaderActionsProps> = ({
   mobileMenuOpen,
   userMenuOpen,
   setUserMenuOpen,
-  logout
+  logout,
+  loading = false
 }) => {
   return (
-    <div className="flex items-center">
-      {/* Search Button */}
+    <div className="flex items-center gap-1">
+      {/* Search button */}
       <button 
-        onClick={toggleSearch}
+        onClick={toggleSearch} 
         className="p-2 rounded-md text-foreground/80 hover:text-primary hover:bg-primary/5 transition-colors"
         aria-label="Search"
       >
@@ -39,31 +42,40 @@ const HeaderActions: React.FC<HeaderActionsProps> = ({
       {/* Cart */}
       <Link 
         to="/cart" 
-        className="p-2 rounded-md text-foreground/80 hover:text-primary hover:bg-primary/5 transition-colors ml-1 relative"
+        className="p-2 rounded-md text-foreground/80 hover:text-primary hover:bg-primary/5 transition-colors relative"
+        aria-label="Shopping cart"
       >
         <ShoppingCart className="h-5 w-5" />
         {itemCount > 0 && (
-          <span className="absolute -top-1 -right-1 flex items-center justify-center bg-primary text-white text-xs rounded-full h-5 w-5">
-            {itemCount}
-          </span>
+          <Badge 
+            variant="default" 
+            className="absolute -top-1 -right-1 min-w-5 h-5 flex items-center justify-center p-0"
+          >
+            {itemCount > 9 ? '9+' : itemCount}
+          </Badge>
         )}
       </Link>
       
-      {/* User Menu or Login/Signup Buttons */}
+      {/* User menu */}
       <UserMenu 
-        user={user}
-        userMenuOpen={userMenuOpen}
-        setUserMenuOpen={setUserMenuOpen}
+        user={user} 
+        userMenuOpen={userMenuOpen} 
+        setUserMenuOpen={setUserMenuOpen} 
         logout={logout}
+        loading={loading}
       />
       
-      {/* Mobile Menu Toggle */}
+      {/* Mobile menu toggle */}
       <button 
-        onClick={toggleMobileMenu}
-        className="p-2 rounded-md text-foreground/80 hover:text-primary hover:bg-primary/5 transition-colors ml-1 md:hidden"
+        onClick={toggleMobileMenu} 
+        className="md:hidden p-2 rounded-md text-foreground/80 hover:text-primary hover:bg-primary/5 transition-colors"
         aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
       >
-        {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+        {mobileMenuOpen ? (
+          <X className="h-5 w-5" />
+        ) : (
+          <Menu className="h-5 w-5" />
+        )}
       </button>
     </div>
   );

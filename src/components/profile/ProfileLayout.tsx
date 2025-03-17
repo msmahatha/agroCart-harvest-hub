@@ -1,11 +1,13 @@
+
 import React from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { Card, CardContent } from '@/components/ui/card';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { User, Package, Heart, Settings, UserRound } from 'lucide-react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, Navigate } from 'react-router-dom';
 import { cn } from '@/lib/utils';
+import { Skeleton } from '@/components/ui/skeleton';
 
 interface ProfileLayoutProps {
   children: React.ReactNode;
@@ -15,22 +17,36 @@ interface ProfileLayoutProps {
 }
 
 const ProfileLayout: React.FC<ProfileLayoutProps> = ({ children, title, description, action }) => {
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
   const location = useLocation();
 
-  if (!user) {
+  // Show loading state while checking authentication
+  if (loading) {
     return (
       <div className="container mx-auto py-20 px-4">
-        <Card>
-          <CardContent className="flex flex-col items-center justify-center py-12">
-            <h2 className="text-2xl font-bold mb-4">You need to be logged in</h2>
-            <p className="text-muted-foreground mb-6">Please log in to view this page</p>
-            <Link to="/login">
-              <Button>Log In</Button>
-            </Link>
-          </CardContent>
-        </Card>
+        <div className="flex items-center justify-between mb-8">
+          <div>
+            <Skeleton className="h-10 w-64 mb-2" />
+            <Skeleton className="h-4 w-48" />
+          </div>
+        </div>
+        
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+          <div className="col-span-1">
+            <Skeleton className="h-[400px] w-full rounded-md" />
+          </div>
+          <div className="col-span-1 lg:col-span-3">
+            <Skeleton className="h-[400px] w-full rounded-md" />
+          </div>
+        </div>
       </div>
+    );
+  }
+
+  // Redirect to login if not authenticated
+  if (!user && !loading) {
+    return (
+      <Navigate to="/login" state={{ from: location.pathname }} replace />
     );
   }
 
@@ -55,8 +71,8 @@ const ProfileLayout: React.FC<ProfileLayoutProps> = ({ children, title, descript
                     <UserRound className="h-12 w-12" />
                   </AvatarFallback>
                 </Avatar>
-                <h2 className="text-xl font-semibold">{user.name}</h2>
-                <p className="text-sm text-muted-foreground">{user.email}</p>
+                <h2 className="text-xl font-semibold">{user?.name}</h2>
+                <p className="text-sm text-muted-foreground">{user?.email}</p>
               </div>
               
               <nav className="space-y-1">

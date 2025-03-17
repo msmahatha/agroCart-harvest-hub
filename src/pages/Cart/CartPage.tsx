@@ -1,12 +1,14 @@
 
 import React from 'react';
 import { useCart } from '@/context/CartContext';
+import { useAuth } from '@/context/AuthContext';
 import EmptyCart from '@/components/cart/EmptyCart';
 import CartItemsList from '@/components/cart/CartItemsList';
 import OrderSummary from '@/components/cart/OrderSummary';
 
 const CartPage = () => {
   const { items, removeFromCart, updateQuantity, subtotal, itemCount, clearCart } = useCart();
+  const { user } = useAuth();
 
   if (items.length === 0) {
     return <EmptyCart />;
@@ -33,6 +35,8 @@ const CartPage = () => {
             subtotal={subtotal}
             clearCart={clearCart}
             items={items}
+            userEmail={user?.email}
+            userName={user?.name}
           />
         </div>
       </div>

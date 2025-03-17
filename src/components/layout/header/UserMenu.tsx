@@ -1,23 +1,38 @@
 
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { User, Package, Heart, Settings, LogOut, UserRound } from 'lucide-react';
 import { AnimatedButton } from '@/components/ui/AnimatedButton';
+import { Skeleton } from '@/components/ui/skeleton';
 
 interface UserMenuProps {
   user: { name: string; email: string } | null;
   userMenuOpen: boolean;
   setUserMenuOpen: (open: boolean) => void;
   logout: () => void;
+  loading?: boolean;
 }
 
 const UserMenu: React.FC<UserMenuProps> = ({
   user,
   userMenuOpen,
   setUserMenuOpen,
-  logout
+  logout,
+  loading = false
 }) => {
+  const navigate = useNavigate();
+  
+  // Loading state
+  if (loading) {
+    return (
+      <div className="hidden md:flex items-center space-x-2">
+        <Skeleton className="h-9 w-20" />
+        <Skeleton className="h-9 w-20" />
+      </div>
+    );
+  }
+  
   // If no user is logged in, show login/signup buttons
   if (!user) {
     return (
@@ -96,6 +111,7 @@ const UserMenu: React.FC<UserMenuProps> = ({
               onClick={() => {
                 logout();
                 setUserMenuOpen(false);
+                navigate('/');
               }}
               className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-muted text-sm transition-colors text-left w-full"
             >

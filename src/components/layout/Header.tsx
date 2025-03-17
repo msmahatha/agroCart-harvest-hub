@@ -14,7 +14,7 @@ import MobileMenu from './header/MobileMenu';
 import SearchOverlay from './header/SearchOverlay';
 
 const Header: React.FC = () => {
-  const { user, logout } = useAuth();
+  const { user, logout, loading } = useAuth();
   const { itemCount } = useCart();
   const location = useLocation();
   const [isScrolled, setIsScrolled] = useState(false);
@@ -98,6 +98,7 @@ const Header: React.FC = () => {
             userMenuOpen={userMenuOpen}
             setUserMenuOpen={setUserMenuOpen}
             logout={logout}
+            loading={loading}
           />
         </div>
       </div>

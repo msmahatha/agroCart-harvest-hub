@@ -1,145 +1,163 @@
 
-import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
-import { Resend } from "npm:resend@2.0.0";
+import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { corsHeaders } from "../_shared/cors.ts";
+import { Resend } from "https://esm.sh/resend@3.2.0";
 
-const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
-
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers":
-    "authorization, x-client-info, apikey, content-type",
-};
-
-interface OrderConfirmationRequest {
-  email: string;
-  orderId: string;
-  orderDate: string;
-  total: number;
-  items: {
-    name: string;
-    price: number;
-    quantity: number;
-  }[];
-  shippingAddress?: {
-    name?: string;
-    address?: string;
-    city?: string;
-    state?: string;
-    zipCode?: string;
-  };
+interface OrderItem {
+  id: string;
+  name: string;
+  price: number;
+  image: string;
+  quantity: number;
 }
 
-const handler = async (req: Request): Promise<Response> => {
+interface OrderDetails {
+  items: OrderItem[];
+  orderId: string;
+  total: number;
+  userEmail: string;
+  userName: string;
+}
+
+serve(async (req) => {
   // Handle CORS preflight requests
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    const orderData: OrderConfirmationRequest = await req.json();
-    const { email, orderId, orderDate, total, items, shippingAddress } = orderData;
+    const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
+    if (!RESEND_API_KEY) {
+      throw new Error("RESEND_API_KEY is not set");
+    }
 
-    console.log("Sending order confirmation email to:", email);
-    
-    // Generate items HTML for the email
-    const itemsHtml = items.map(item => `
-      <tr>
-        <td style="padding: 10px; border-bottom: 1px solid #eee;">${item.name}</td>
-        <td style="padding: 10px; border-bottom: 1px solid #eee; text-align: center;">${item.quantity}</td>
-        <td style="padding: 10px; border-bottom: 1px solid #eee; text-align: right;">₹${item.price.toLocaleString('en-IN')}</td>
-        <td style="padding: 10px; border-bottom: 1px solid #eee; text-align: right;">₹${(item.price * item.quantity).toLocaleString('en-IN')}</td>
-      </tr>
-    `).join('');
+    const resend = new Resend(RESEND_API_KEY);
 
-    const shippingCost = total >= 5000 ? 0 : 150;
-    const taxAmount = total * 0.18; // GST 18%
-    const grandTotal = total + shippingCost + taxAmount;
+    // Get request body
+    const { items, orderId, total, userEmail, userName } = await req.json() as OrderDetails;
 
-    const emailResponse = await resend.emails.send({
-      from: "AgroKart <order-confirmation@resend.dev>",
-      to: [email],
-      subject: `Your AgroKart Order #${orderId} Confirmation`,
+    if (!items || !orderId || !total || !userEmail) {
+      return new Response(
+        JSON.stringify({
+          error: "Missing required fields: items, orderId, total, userEmail",
+        }),
+        {
+          status: 400,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        }
+      );
+    }
+
+    console.log("Sending order confirmation email to:", userEmail);
+
+    // Generate items HTML for email
+    const itemsHtml = items
+      .map(
+        (item) => `
+        <tr>
+          <td style="padding: 10px; border-bottom: 1px solid #eee;">
+            ${item.name}
+          </td>
+          <td style="padding: 10px; border-bottom: 1px solid #eee; text-align: center;">
+            ${item.quantity}
+          </td>
+          <td style="padding: 10px; border-bottom: 1px solid #eee; text-align: right;">
+            ₹${item.price.toFixed(2)}
+          </td>
+          <td style="padding: 10px; border-bottom: 1px solid #eee; text-align: right;">
+            ₹${(item.price * item.quantity).toFixed(2)}
+          </td>
+        </tr>
+      `
+      )
+      .join("");
+
+    // Send email
+    const { data, error } = await resend.emails.send({
+      from: "AgroCart <orders@agrocart.com>",
+      to: userEmail,
+      subject: `Order Confirmation #${orderId}`,
       html: `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; color: #333;">
-          <div style="text-align: center; margin-bottom: 20px;">
-            <h1 style="color: #2e7d32; margin-bottom: 5px;">Order Confirmation</h1>
-            <p style="color: #666;">Thank you for your order!</p>
+        <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #333; max-width: 600px; margin: 0 auto;">
+          <div style="background-color: #4CAF50; padding: 20px; text-align: center;">
+            <h1 style="color: white; margin: 0;">Order Confirmation</h1>
           </div>
           
-          <div style="background-color: #f9f9f9; border-radius: 5px; padding: 15px; margin-bottom: 20px;">
-            <h2 style="margin-top: 0; font-size: 16px;">Order Details</h2>
-            <p><strong>Order ID:</strong> ${orderId}</p>
-            <p><strong>Order Date:</strong> ${orderDate}</p>
+          <div style="padding: 20px; border: 1px solid #eee; background-color: #fff;">
+            <p>Hello ${userName || "Valued Customer"},</p>
+            
+            <p>Thank you for your order! We're pleased to confirm that your order has been received and is being processed.</p>
+            
+            <div style="background-color: #f9f9f9; border: 1px solid #eee; padding: 15px; margin: 20px 0;">
+              <h2 style="margin-top: 0; color: #4CAF50;">Order Summary</h2>
+              <p><strong>Order Number:</strong> #${orderId}</p>
+              
+              <table style="width: 100%; border-collapse: collapse;">
+                <thead>
+                  <tr style="background-color: #f5f5f5;">
+                    <th style="padding: 10px; text-align: left; border-bottom: 2px solid #eee;">Product</th>
+                    <th style="padding: 10px; text-align: center; border-bottom: 2px solid #eee;">Quantity</th>
+                    <th style="padding: 10px; text-align: right; border-bottom: 2px solid #eee;">Price</th>
+                    <th style="padding: 10px; text-align: right; border-bottom: 2px solid #eee;">Total</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${itemsHtml}
+                </tbody>
+                <tfoot>
+                  <tr>
+                    <td colspan="3" style="padding: 10px; text-align: right; font-weight: bold;">Order Total:</td>
+                    <td style="padding: 10px; text-align: right; font-weight: bold;">₹${total.toFixed(2)}</td>
+                  </tr>
+                </tfoot>
+              </table>
+            </div>
+            
+            <p>If you have any questions or concerns about your order, please contact our customer service team.</p>
+            
+            <p>Thank you for shopping with AgroCart!</p>
           </div>
           
-          <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
-            <thead>
-              <tr style="background-color: #f2f2f2;">
-                <th style="padding: 10px; text-align: left;">Product</th>
-                <th style="padding: 10px; text-align: center;">Qty</th>
-                <th style="padding: 10px; text-align: right;">Price</th>
-                <th style="padding: 10px; text-align: right;">Total</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${itemsHtml}
-            </tbody>
-            <tfoot>
-              <tr>
-                <td colspan="3" style="padding: 10px; text-align: right; font-weight: bold;">Subtotal:</td>
-                <td style="padding: 10px; text-align: right;">₹${total.toLocaleString('en-IN')}</td>
-              </tr>
-              <tr>
-                <td colspan="3" style="padding: 10px; text-align: right;">Shipping:</td>
-                <td style="padding: 10px; text-align: right;">₹${shippingCost.toLocaleString('en-IN')}</td>
-              </tr>
-              <tr>
-                <td colspan="3" style="padding: 10px; text-align: right;">Tax (GST 18%):</td>
-                <td style="padding: 10px; text-align: right;">₹${taxAmount.toLocaleString('en-IN', { maximumFractionDigits: 2 })}</td>
-              </tr>
-              <tr>
-                <td colspan="3" style="padding: 10px; text-align: right; font-weight: bold; font-size: 16px;">Grand Total:</td>
-                <td style="padding: 10px; text-align: right; font-weight: bold; font-size: 16px;">₹${grandTotal.toLocaleString('en-IN', { maximumFractionDigits: 2 })}</td>
-              </tr>
-            </tfoot>
-          </table>
-          
-          ${shippingAddress ? `
-          <div style="background-color: #f9f9f9; border-radius: 5px; padding: 15px; margin-bottom: 20px;">
-            <h2 style="margin-top: 0; font-size: 16px;">Shipping Address</h2>
-            <p>${shippingAddress.name || ''}</p>
-            <p>${shippingAddress.address || ''}</p>
-            <p>${shippingAddress.city || ''}, ${shippingAddress.state || ''} ${shippingAddress.zipCode || ''}</p>
-          </div>
-          ` : ''}
-          
-          <div style="text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #eee; color: #666; font-size: 14px;">
-            <p>Thank you for shopping with AgroKart!</p>
-            <p>If you have any questions about your order, please contact our customer service at <a href="mailto:support@agrokart.com" style="color: #2e7d32;">support@agrokart.com</a></p>
+          <div style="padding: 20px; text-align: center; font-size: 12px; color: #777;">
+            <p>© 2023 AgroCart. All rights reserved.</p>
+            <p>This is an automated email, please do not reply.</p>
           </div>
         </div>
       `,
     });
 
-    console.log("Email sent response:", emailResponse);
+    if (error) {
+      console.error("Error sending email:", error);
+      return new Response(
+        JSON.stringify({ success: false, error: error.message }),
+        {
+          status: 500,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        }
+      );
+    }
 
-    return new Response(JSON.stringify({ success: true }), {
-      status: 200,
-      headers: {
-        "Content-Type": "application/json",
-        ...corsHeaders,
-      },
-    });
-  } catch (error) {
-    console.error("Error sending order confirmation email:", error);
     return new Response(
-      JSON.stringify({ error: error.message }),
+      JSON.stringify({ 
+        success: true, 
+        message: "Order confirmation email sent successfully" 
+      }),
+      {
+        status: 200,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      }
+    );
+  } catch (error) {
+    console.error("Unexpected error:", error);
+    return new Response(
+      JSON.stringify({ 
+        success: false, 
+        error: error.message || "An unexpected error occurred" 
+      }),
       {
         status: 500,
-        headers: { "Content-Type": "application/json", ...corsHeaders },
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
       }
     );
   }
-};
-
-serve(handler);
+});
