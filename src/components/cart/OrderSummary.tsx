@@ -51,6 +51,7 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
     }
     
     setPlacing(true);
+    toast.loading("Processing your order...");
     
     try {
       // Generate a random order ID
@@ -73,16 +74,29 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
       
       if (error) {
         console.error('Error sending order confirmation:', error);
+        toast.dismiss();
         toast.error("Failed to send order confirmation");
-      } else {
-        toast.success("Order confirmation sent to your email");
-        // Show confirmation dialog
-        setShowConfirmation(true);
-        // Clear cart
-        clearCart();
+        return;
       }
+      
+      if (!data?.success) {
+        console.error('Error in order confirmation response:', data);
+        toast.dismiss();
+        toast.error(data?.error || "Failed to send order confirmation");
+        return;
+      }
+      
+      toast.dismiss();
+      toast.success("Order confirmation sent to your email");
+      
+      // Show confirmation dialog
+      setShowConfirmation(true);
+      
+      // Clear cart
+      clearCart();
     } catch (error) {
       console.error('Error processing order:', error);
+      toast.dismiss();
       toast.error("An error occurred while processing your order");
     } finally {
       setPlacing(false);
