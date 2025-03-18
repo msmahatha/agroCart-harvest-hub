@@ -29,8 +29,11 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
   userEmail,
   userName
 }) => {
-  const shipping = subtotal > 0 ? (subtotal > 1000 ? 0 : 100) : 0;
+  // Fix delivery charge calculation: free for orders above ₹1000
+  const shipping = subtotal > 0 ? (subtotal >= 1000 ? 0 : 100) : 0;
   const tax = subtotal * 0.05; // 5% tax
+  
+  // Total is correctly calculated as subtotal + shipping + tax
   const total = subtotal + shipping + tax;
   
   const navigate = useNavigate();
@@ -58,7 +61,7 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
       const generatedOrderId = Math.random().toString(36).substring(2, 10).toUpperCase();
       setOrderId(generatedOrderId);
       
-      // Send order confirmation email
+      // Send order confirmation email with the corrected total
       const { data, error } = await supabase.functions.invoke('send-order-confirmation', {
         body: {
           items,
@@ -157,7 +160,7 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
         <div className="mt-6 space-y-4">
           <div className="flex items-center justify-center text-sm text-muted-foreground">
             <Truck className="h-4 w-4 mr-2" />
-            {subtotal > 1000 
+            {subtotal >= 1000 
               ? "Free delivery on this order!"
               : "Free delivery on orders above ₹1,000"}
           </div>
