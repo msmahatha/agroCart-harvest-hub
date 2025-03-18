@@ -4,8 +4,9 @@ import { Link } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { Product } from '@/data/products';
 import { motion } from 'framer-motion';
-import { ShoppingCart, MoveRight } from 'lucide-react';
+import { ShoppingCart, MoveRight, Heart } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
+import { useWishlist } from '@/context/WishlistContext';
 import { ProductImage, ProductPrice, ProductRating } from './ProductCardUtils';
 
 interface ProductCardDefaultProps {
@@ -24,6 +25,7 @@ const ProductCardDefault: React.FC<ProductCardDefaultProps> = ({
   isNew = false
 }) => {
   const { addToCart } = useCart();
+  const { toggleWishlist, isInWishlist } = useWishlist();
   const [isHovered, setIsHovered] = React.useState(false);
   
   const handleAddToCart = (e: React.MouseEvent) => {
@@ -38,6 +40,12 @@ const ProductCardDefault: React.FC<ProductCardDefaultProps> = ({
     addToCart(product);
     // Navigate to cart page
     window.location.href = '/cart';
+  };
+
+  const handleToggleWishlist = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    toggleWishlist(product);
   };
 
   return (
@@ -78,9 +86,19 @@ const ProductCardDefault: React.FC<ProductCardDefaultProps> = ({
                 </button>
                 <button 
                   onClick={handleBuyNow}
-                  className="p-3 rounded-full bg-white text-primary hover:bg-primary hover:text-white transition-colors shadow-lg"
+                  className="p-3 rounded-full bg-white text-[#8B5CF6] hover:bg-[#8B5CF6] hover:text-white transition-colors shadow-lg"
                 >
                   <MoveRight size={20} />
+                </button>
+                <button 
+                  onClick={handleToggleWishlist}
+                  className={`p-3 rounded-full bg-white transition-colors shadow-lg ${
+                    isInWishlist(product.id) 
+                      ? "text-red-500 hover:bg-red-50" 
+                      : "text-primary hover:bg-primary hover:text-white"
+                  }`}
+                >
+                  <Heart size={20} className={isInWishlist(product.id) ? "fill-red-500" : ""} />
                 </button>
               </motion.div>
             )}

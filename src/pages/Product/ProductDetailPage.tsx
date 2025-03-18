@@ -1,6 +1,8 @@
+
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useCart } from '@/context/CartContext';
+import { useWishlist } from '@/context/WishlistContext';
 import { 
   getProductBySlug, 
   getProductsByCategory, 
@@ -18,7 +20,8 @@ import {
   RotateCcw, 
   HelpCircle,
   IndianRupee,
-  MoveRight
+  MoveRight,
+  Heart
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
@@ -30,6 +33,7 @@ import ProductGrid from '@/components/product/ProductGrid';
 const ProductDetailPage = () => {
   const { slug } = useParams<{ slug: string }>();
   const { addToCart } = useCart();
+  const { toggleWishlist, isInWishlist } = useWishlist();
   const [quantity, setQuantity] = useState(1);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
 
@@ -73,6 +77,10 @@ const ProductDetailPage = () => {
   const handleBuyNow = () => {
     addToCart(product!, quantity);
     window.location.href = '/cart';
+  };
+
+  const handleToggleWishlist = () => {
+    toggleWishlist(product!);
   };
 
   // Use the gallery or fall back to the main image
@@ -220,12 +228,20 @@ const ProductDetailPage = () => {
                 Add to Cart
               </Button>
               <Button 
-                variant="secondary" 
-                className="flex-1 sm:flex-none"
+                variant="secondary"
+                className="flex-1 sm:flex-none bg-[#8B5CF6] hover:bg-[#7c4af5] text-white"
                 onClick={handleBuyNow}
               >
                 <MoveRight className="mr-2 h-4 w-4" />
                 Buy Now
+              </Button>
+              <Button 
+                variant="outline" 
+                size="icon"
+                onClick={handleToggleWishlist}
+                className={isInWishlist(product.id) ? "text-red-500 hover:text-red-600 hover:bg-red-50" : ""}
+              >
+                <Heart className={`h-4 w-4 ${isInWishlist(product.id) ? "fill-red-500" : ""}`} />
               </Button>
               <Button variant="outline" size="icon">
                 <Share2 className="h-4 w-4" />

@@ -3,8 +3,9 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { Product } from '@/data/products';
-import { ShoppingCart, MoveRight } from 'lucide-react';
+import { ShoppingCart, MoveRight, Heart } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
+import { useWishlist } from '@/context/WishlistContext';
 import { ProductImage, ProductPrice, ProductRating } from './ProductCardUtils';
 
 interface ProductCardHorizontalProps {
@@ -23,6 +24,7 @@ const ProductCardHorizontal: React.FC<ProductCardHorizontalProps> = ({
   isNew = false
 }) => {
   const { addToCart } = useCart();
+  const { toggleWishlist, isInWishlist } = useWishlist();
   
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -36,6 +38,12 @@ const ProductCardHorizontal: React.FC<ProductCardHorizontalProps> = ({
     addToCart(product);
     // Navigate to cart page
     window.location.href = '/cart';
+  };
+
+  const handleToggleWishlist = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    toggleWishlist(product);
   };
 
   return (
@@ -77,9 +85,19 @@ const ProductCardHorizontal: React.FC<ProductCardHorizontalProps> = ({
             )}
             <button 
               onClick={handleBuyNow}
-              className="p-2 rounded-full bg-primary/10 text-primary hover:bg-primary hover:text-white transition-colors"
+              className="p-2 rounded-full bg-[#8B5CF6]/10 text-[#8B5CF6] hover:bg-[#8B5CF6] hover:text-white transition-colors"
             >
               <MoveRight size={18} />
+            </button>
+            <button 
+              onClick={handleToggleWishlist}
+              className={`p-2 rounded-full transition-colors ${
+                isInWishlist(product.id) 
+                  ? "bg-red-100 text-red-500 hover:bg-red-200" 
+                  : "bg-primary/10 text-primary hover:bg-primary hover:text-white"
+              }`}
+            >
+              <Heart size={18} className={isInWishlist(product.id) ? "fill-red-500" : ""} />
             </button>
           </div>
         </div>
