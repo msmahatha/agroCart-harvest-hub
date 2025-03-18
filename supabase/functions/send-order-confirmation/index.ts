@@ -42,6 +42,7 @@ serve(async (req) => {
     if (!items || !orderId || !total || !userEmail) {
       return new Response(
         JSON.stringify({
+          success: false,
           error: "Missing required fields: items, orderId, total, userEmail",
         }),
         {
@@ -151,6 +152,8 @@ serve(async (req) => {
         }
       );
     }
+
+    console.log("Email sent successfully:", data);
 
     return new Response(
       JSON.stringify({ 
