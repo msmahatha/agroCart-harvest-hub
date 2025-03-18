@@ -14,7 +14,7 @@ const CartPage = () => {
   const orderItems = items.map(item => ({
     id: item.product.id,
     name: item.product.name,
-    price: (item.product.salePrice || item.product.price) * 83, // Convert to INR
+    price: item.product.salePrice ? item.product.salePrice * 83 : item.product.price * 83, // Convert to INR
     image: item.product.image,
     quantity: item.quantity
   }));
@@ -41,7 +41,7 @@ const CartPage = () => {
         {/* Order Summary */}
         <div>
           <OrderSummary 
-            subtotal={subtotal}
+            subtotal={subtotal * 83} // Convert to INR to match CartItem display
             clearCart={clearCart}
             items={orderItems}
             userEmail={user?.email}
