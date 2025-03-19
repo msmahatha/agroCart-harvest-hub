@@ -1,0 +1,15 @@
+
+/* Hide any Lovable AI edit popups */
+[class*="lovable-edit"],
+[id*="lovable-edit"],
+[data-lovable-edit],
+.lovable-tagger-highlight,
+.lovable-edit-button,
+.lovable-popup,
+.lovable-overlay,
+[class*="lovable-tagger"] {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
