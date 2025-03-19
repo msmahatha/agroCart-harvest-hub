@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useCart } from '@/context/CartContext';
 import { useWishlist } from '@/context/WishlistContext';
+import { useAuth } from '@/context/AuthContext';
 import { 
   getProductBySlug, 
   getProductsByCategory, 
@@ -29,11 +30,13 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { ProductRating, calculateDiscountPercentage } from '@/components/product/ProductCardUtils';
 import ProductGrid from '@/components/product/ProductGrid';
+import { toast } from 'sonner';
 
 const ProductDetailPage = () => {
   const { slug } = useParams<{ slug: string }>();
   const { addToCart } = useCart();
   const { toggleWishlist, isInWishlist } = useWishlist();
+  const { user } = useAuth();
   const [quantity, setQuantity] = useState(1);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
 
@@ -74,9 +77,120 @@ const ProductDetailPage = () => {
     addToCart(product!, quantity);
   };
 
-  const handleBuyNow = () => {
+  const sendOrderConfirmationEmail = async (orderDetails: {
+    items: Array<{
+      id: string;
+      name: string;
+      price: number;
+      image: string;
+      quantity: number;
+    }>;
+    orderId: string;
+    total: number;
+    userEmail?: string;
+    userName?: string;
+    subtotal: number;
+    shipping: number;
+    tax: number;
+  }) => {
+    try {
+      if (!orderDetails.userEmail) {
+        console.warn("No user email provided, skipping email confirmation");
+        return;
+      }
+
+      const response = await fetch(
+        'https://iljrrqtcmctrydrtnttg.supabase.co/functions/v1/send-order-confirmation', 
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(orderDetails)
+        }
+      );
+
+      const data = await response.json();
+      
+      if (!data.success) {
+        console.error("Failed to send order confirmation email:", data.error);
+      } else {
+        console.log("Order confirmation email sent successfully");
+      }
+    } catch (error) {
+      console.error("Error sending order confirmation email:", error);
+    }
+  };
+
+  const handleBuyNow = async () => {
+    // Add to cart first
     addToCart(product!, quantity);
-    window.location.href = '/cart';
+    
+    // If user is not logged in, redirect to login page
+    if (!user || !user.email) {
+      toast.error("Please log in to place an order");
+      window.location.href = '/login';
+      return;
+    }
+    
+    toast.loading("Processing your direct order...");
+    
+    try {
+      // Generate a random order ID
+      const generatedOrderId = Math.random().toString(36).substring(2, 10).toUpperCase();
+      
+      // Create order item for this product
+      const orderItem = {
+        id: product!.id,
+        name: product!.name,
+        price: product!.salePrice ? product!.salePrice * 83 : product!.price * 83,
+        image: product!.image,
+        quantity: quantity
+      };
+      
+      // Calculate order total
+      const itemTotal = orderItem.price * orderItem.quantity;
+      const shipping = itemTotal >= 1000 ? 0 : 100;
+      const tax = itemTotal * 0.05;
+      const orderTotal = itemTotal + shipping + tax;
+      
+      // Save order to localStorage for orders history
+      const existingOrders = JSON.parse(localStorage.getItem('orders') || '[]');
+      
+      const newOrder = {
+        id: generatedOrderId,
+        date: new Date(),
+        total: orderTotal,
+        status: 'Processing',
+        items: 1,
+        products: [product!.name]
+      };
+      
+      localStorage.setItem('orders', JSON.stringify([newOrder, ...existingOrders]));
+      
+      // Send email confirmation for the direct purchase
+      await sendOrderConfirmationEmail({
+        items: [orderItem],
+        orderId: generatedOrderId,
+        total: orderTotal,
+        userEmail: user.email,
+        userName: user.name,
+        subtotal: itemTotal,
+        shipping,
+        tax
+      });
+      
+      toast.dismiss();
+      toast.success("Order placed successfully!");
+      
+      // Redirect to orders page
+      window.location.href = '/orders';
+      
+    } catch (error) {
+      console.error('Error processing order:', error);
+      toast.dismiss();
+      toast.error("An error occurred while processing your order");
+    }
   };
 
   const handleToggleWishlist = () => {

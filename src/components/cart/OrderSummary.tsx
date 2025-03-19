@@ -40,6 +40,45 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [orderId, setOrderId] = useState('');
   
+  const sendOrderConfirmationEmail = async (orderDetails: {
+    items: typeof items;
+    orderId: string;
+    total: number;
+    userEmail?: string;
+    userName?: string;
+    subtotal: number;
+    shipping: number;
+    tax: number;
+  }) => {
+    try {
+      if (!orderDetails.userEmail) {
+        console.warn("No user email provided, skipping email confirmation");
+        return;
+      }
+
+      const response = await fetch(
+        'https://iljrrqtcmctrydrtnttg.supabase.co/functions/v1/send-order-confirmation', 
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(orderDetails)
+        }
+      );
+
+      const data = await response.json();
+      
+      if (!data.success) {
+        console.error("Failed to send order confirmation email:", data.error);
+      } else {
+        console.log("Order confirmation email sent successfully");
+      }
+    } catch (error) {
+      console.error("Error sending order confirmation email:", error);
+    }
+  };
+  
   const handlePlaceOrder = async () => {
     if (items.length === 0) {
       toast.error("Your cart is empty");
@@ -73,6 +112,18 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
       };
       
       localStorage.setItem('orders', JSON.stringify([newOrder, ...existingOrders]));
+      
+      // Send email confirmation
+      await sendOrderConfirmationEmail({
+        items,
+        orderId: generatedOrderId,
+        total,
+        userEmail,
+        userName,
+        subtotal,
+        shipping,
+        tax
+      });
       
       toast.dismiss();
       toast.success("Order placed successfully!");
