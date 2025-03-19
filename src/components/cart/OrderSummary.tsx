@@ -5,7 +5,6 @@ import { Separator } from '@/components/ui/separator';
 import { ShoppingBag, Truck, IndianRupee, Trash } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import OrderConfirmationDialog from './OrderConfirmationDialog';
-import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
 interface OrderSummaryProps {
@@ -61,36 +60,22 @@ const OrderSummary: React.FC<OrderSummaryProps> = ({
       const generatedOrderId = Math.random().toString(36).substring(2, 10).toUpperCase();
       setOrderId(generatedOrderId);
       
-      // Send order confirmation email with the corrected total
-      const { data, error } = await supabase.functions.invoke('send-order-confirmation', {
-        body: {
-          items,
-          orderId: generatedOrderId,
-          total,
-          subtotal,
-          shipping,
-          tax,
-          userEmail,
-          userName
-        }
-      });
+      // Save order to localStorage for orders history
+      const existingOrders = JSON.parse(localStorage.getItem('orders') || '[]');
       
-      if (error) {
-        console.error('Error sending order confirmation:', error);
-        toast.dismiss();
-        toast.error("Failed to send order confirmation");
-        return;
-      }
+      const newOrder = {
+        id: generatedOrderId,
+        date: new Date(),
+        total: total,
+        status: 'Processing',
+        items: items.length,
+        products: items.map(item => item.name)
+      };
       
-      if (!data?.success) {
-        console.error('Error in order confirmation response:', data);
-        toast.dismiss();
-        toast.error(data?.error || "Failed to send order confirmation");
-        return;
-      }
+      localStorage.setItem('orders', JSON.stringify([newOrder, ...existingOrders]));
       
       toast.dismiss();
-      toast.success("Order confirmation sent to your email");
+      toast.success("Order placed successfully!");
       
       // Show confirmation dialog
       setShowConfirmation(true);

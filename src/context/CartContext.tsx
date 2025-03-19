@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { Product } from '@/data/products';
 import { toast } from 'sonner';
@@ -114,22 +113,6 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
   };
 
   const clearCart = () => {
-    // Save current cart items as an order before clearing
-    if (items.length > 0) {
-      const existingOrders = JSON.parse(localStorage.getItem('orders') || '[]');
-      
-      const newOrder = {
-        id: `ORD${Math.floor(Math.random() * 10000000)}`,
-        date: new Date(),
-        total: subtotal + (subtotal >= 500 ? 0 : 50) + (subtotal * 0.05),
-        status: 'Processing',
-        items: itemCount,
-        products: items.map(item => item.product.name)
-      };
-      
-      localStorage.setItem('orders', JSON.stringify([newOrder, ...existingOrders]));
-    }
-    
     setItems([]);
     toast.info("Cart has been cleared");
   };
