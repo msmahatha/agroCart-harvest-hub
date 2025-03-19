@@ -7,8 +7,29 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>GreenGrove Garden Center</title>
     <meta name="description" content="Your one-stop shop for all gardening needs - GreenGrove Garden Center" />
-    <!-- Add the CSS to hide any lovable edit popups -->
+    <!-- Add the CSS to hide any lovable edit popups - high priority -->
     <link rel="stylesheet" href="/hide-lovable-popup.css" />
+    <!-- Inline CSS as a backup to ensure popups are hidden -->
+    <style>
+      [class*="lovable-edit"],
+      [id*="lovable-edit"],
+      [data-lovable-edit],
+      .lovable-tagger-highlight,
+      .lovable-edit-button,
+      .lovable-popup,
+      .lovable-overlay,
+      [class*="lovable-tagger"],
+      [class*="lovable"],
+      [id*="lovable"],
+      [data-lovable],
+      #lovable-tagger-root,
+      #lovable-edit-root {
+        display: none !important;
+        visibility: hidden !important;
+        opacity: 0 !important;
+        pointer-events: none !important;
+      }
+    </style>
   </head>
   <body>
     <div id="root"></div>

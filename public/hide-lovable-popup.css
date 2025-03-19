@@ -7,9 +7,38 @@
 .lovable-edit-button,
 .lovable-popup,
 .lovable-overlay,
-[class*="lovable-tagger"] {
+[class*="lovable-tagger"],
+[class*="lovable"],
+[id*="lovable"],
+[data-lovable],
+.lovable-overlay,
+.lovable-button,
+.tagger-button,
+.lovable-container,
+div[id^="lovable-"],
+#lovable-tagger-root,
+#lovable-edit-root {
   display: none !important;
   visibility: hidden !important;
   opacity: 0 !important;
   pointer-events: none !important;
+  z-index: -9999 !important;
+  width: 0 !important;
+  height: 0 !important;
+  overflow: hidden !important;
+  position: absolute !important;
+  top: -9999px !important;
+  left: -9999px !important;
+}
+
+/* Additional defensive styling */
+body [class*="lovable-"],
+body [id*="lovable-"],
+body [data-lovable] {
+  display: none !important;
+}
+
+/* Make sure the CSS applies even if loaded dynamically */
+:root {
+  --lovable-display: none !important;
 }

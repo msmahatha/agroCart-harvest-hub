@@ -3,7 +3,7 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react-swc";
 import path from "path";
 // Import but don't use the componentTagger
-import { componentTagger } from "lovable-tagger";
+// import { componentTagger } from "lovable-tagger";
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
@@ -13,7 +13,7 @@ export default defineConfig(({ mode }) => ({
   },
   plugins: [
     react(),
-    // Disable the component tagger completely - this should remove the edit popup
+    // Completely disabled - do not use the component tagger at all
     // mode === 'development' &&
     // componentTagger(),
   ].filter(Boolean),
