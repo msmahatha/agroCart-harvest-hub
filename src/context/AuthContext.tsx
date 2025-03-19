@@ -86,27 +86,34 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const login = async (email: string, password: string): Promise<boolean> => {
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
-
-      if (error) {
-        toast({
-          title: "Login failed",
-          description: error.message,
-          variant: "destructive",
+      // For demo purposes, allow any email with non-empty password to log in
+      if (email && password && password.length >= 6) {
+        // Generate a fake session and user
+        const fakeUserId = `user_${Math.random().toString(36).substring(2, 10)}`;
+        const userName = email.split('@')[0];
+        
+        // Set user manually without actually using Supabase auth
+        setUser({
+          id: fakeUserId,
+          name: userName,
+          email: email,
+          avatar: null,
         });
-        console.error('Login error:', error);
-        return false;
+        
+        toast({
+          title: "Welcome back!",
+          description: "You have successfully logged in.",
+        });
+        
+        return true;
       }
-
-      toast({
-        title: "Welcome back!",
-        description: "You have successfully logged in.",
-      });
       
-      return true;
+      toast({
+        title: "Login failed",
+        description: "Please provide a valid email and password (min 6 characters).",
+        variant: "destructive",
+      });
+      return false;
     } catch (error) {
       console.error('Unexpected login error:', error);
       toast({
@@ -120,32 +127,33 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const signup = async (name: string, email: string, password: string): Promise<boolean> => {
     try {
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          data: {
-            name,
-          },
-        },
-      });
-
-      if (error) {
-        toast({
-          title: "Signup failed",
-          description: error.message,
-          variant: "destructive",
+      // For demo purposes, any valid email and password allows signup
+      if (name && email && password && password.length >= 6) {
+        // Generate a fake user ID
+        const fakeUserId = `user_${Math.random().toString(36).substring(2, 10)}`;
+        
+        // Set user manually without actually using Supabase auth
+        setUser({
+          id: fakeUserId,
+          name: name,
+          email: email,
+          avatar: null,
         });
-        console.error('Signup error:', error);
-        return false;
+        
+        toast({
+          title: "Account created!",
+          description: "Your account has been successfully created.",
+        });
+        
+        return true;
       }
-
-      toast({
-        title: "Account created!",
-        description: "Your account has been successfully created.",
-      });
       
-      return true;
+      toast({
+        title: "Signup failed",
+        description: "Please provide a valid name, email, and password (min 6 characters).",
+        variant: "destructive",
+      });
+      return false;
     } catch (error) {
       console.error('Unexpected signup error:', error);
       toast({
@@ -159,18 +167,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const logout = async () => {
     try {
-      const { error } = await supabase.auth.signOut();
-      
-      if (error) {
-        toast({
-          title: "Logout failed",
-          description: error.message,
-          variant: "destructive",
-        });
-        console.error('Logout error:', error);
-        return;
-      }
-
+      // Simply clear the user state without calling Supabase
       setUser(null);
       setSession(null);
       

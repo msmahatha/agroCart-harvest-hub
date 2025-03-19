@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
@@ -9,10 +10,11 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 
 const loginSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email address" }),
-  password: z.string().min(8, { message: "Password must be at least 8 characters" }),
+  password: z.string().min(6, { message: "Password must be at least 6 characters" }),
 });
 
 type LoginFormValues = z.infer<typeof loginSchema>;
@@ -40,7 +42,7 @@ const LoginPage = () => {
       if (success) {
         navigate('/');
       } else {
-        setLoginError("Invalid email or password. Please try again.");
+        setLoginError("Login failed. Please check your credentials and try again.");
       }
     } catch (error) {
       setLoginError("An error occurred. Please try again later.");
@@ -66,6 +68,12 @@ const LoginPage = () => {
           </CardDescription>
         </CardHeader>
         <CardContent>
+          <Alert className="mb-4 bg-blue-50 border-blue-200">
+            <AlertDescription>
+              For testing, you can use any valid email format with a password of at least 6 characters.
+            </AlertDescription>
+          </Alert>
+          
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
               <FormField
