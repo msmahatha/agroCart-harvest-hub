@@ -47,7 +47,7 @@ const ProductCatalogPage = () => {
   const [searchTerm, setSearchTerm] = useState(searchQuery || '');
   const [sortOption, setSortOption] = useState('featured');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
-  const [priceRange, setPriceRange] = useState<[number, number]>([0, 500]);
+  const [priceRange, setPriceRange] = useState<[number, number]>([0, 40000]);
   const [selectedBrands, setSelectedBrands] = useState<string[]>([]);
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
 
@@ -248,42 +248,42 @@ const ProductCatalogPage = () => {
                 <AccordionContent>
                   <div className="space-y-4">
                     <div className="flex justify-between">
-                      <span>${priceRange[0]}</span>
-                      <span>${priceRange[1]}</span>
+                      <span>₹{priceRange[0]}</span>
+                      <span>₹{priceRange[1]}</span>
                     </div>
                     {/* This is a simplified price range - in a real app, use a proper slider component */}
                     <div className="flex space-x-2">
                       <Button 
                         variant="outline" 
                         size="sm" 
-                        className={priceRange[0] === 0 && priceRange[1] === 500 ? 'bg-primary/10 text-primary' : ''}
-                        onClick={() => setPriceRange([0, 500])}
+                        className={priceRange[0] === 0 && priceRange[1] === 40000 ? 'bg-primary/10 text-primary' : ''}
+                        onClick={() => setPriceRange([0, 40000])}
                       >
                         All
                       </Button>
                       <Button 
                         variant="outline" 
                         size="sm"
-                        className={priceRange[0] === 0 && priceRange[1] === 50 ? 'bg-primary/10 text-primary' : ''}
-                        onClick={() => setPriceRange([0, 50])}
+                        className={priceRange[0] === 0 && priceRange[1] === 4000 ? 'bg-primary/10 text-primary' : ''}
+                        onClick={() => setPriceRange([0, 4000])}
                       >
-                        Under $50
+                        Under ₹4K
                       </Button>
                       <Button 
                         variant="outline" 
                         size="sm"
-                        className={priceRange[0] === 50 && priceRange[1] === 200 ? 'bg-primary/10 text-primary' : ''}
+                        className={priceRange[0] === 4000 && priceRange[1] === 16000? 'bg-primary/10 text-primary' : ''}
                         onClick={() => setPriceRange([50, 200])}
                       >
-                        $50-$200
+                        ₹4k-₹16K
                       </Button>
                       <Button 
                         variant="outline" 
                         size="sm"
-                        className={priceRange[0] === 200 && priceRange[1] === 500 ? 'bg-primary/10 text-primary' : ''}
+                        className={priceRange[0] === 16000 && priceRange[1] === 40000 ? 'bg-primary/10 text-primary' : ''}
                         onClick={() => setPriceRange([200, 500])}
                       >
-                        $200+
+                        ₹16K+
                       </Button>
                     </div>
                   </div>
@@ -357,7 +357,7 @@ const ProductCatalogPage = () => {
                 className="w-full"
                 onClick={() => {
                   setSelectedBrands([]);
-                  setPriceRange([0, 500]);
+                  setPriceRange([0, 40000]);
                 }}
               >
                 Reset Filters
@@ -415,14 +415,14 @@ const ProductCatalogPage = () => {
           </div>
 
           {/* Active Filters */}
-          {(selectedBrands.length > 0 || priceRange[0] !== 0 || priceRange[1] !== 500) && (
+          {(selectedBrands.length > 0 || priceRange[0] !== 0 || priceRange[1] !== 40000) && (
             <div className="mb-6">
               <div className="flex flex-wrap gap-2 items-center">
                 <span className="text-sm font-medium">Active Filters:</span>
                 
-                {priceRange[0] !== 0 || priceRange[1] !== 500 ? (
+                {priceRange[0] !== 0 || priceRange[1] !== 40000 ? (
                   <Badge variant="secondary" className="flex items-center">
-                    ${priceRange[0]} - ${priceRange[1]}
+                    ₹{priceRange[0]} - ₹{priceRange[1]}
                     <button
                       className="ml-1 hover:text-destructive"
                       onClick={() => setPriceRange([0, 500])}
@@ -448,7 +448,7 @@ const ProductCatalogPage = () => {
                   className="text-sm text-muted-foreground hover:text-primary"
                   onClick={() => {
                     setSelectedBrands([]);
-                    setPriceRange([0, 500]);
+                    setPriceRange([0, 40000]);
                   }}
                 >
                   Clear all
@@ -467,7 +467,7 @@ const ProductCatalogPage = () => {
               <Button 
                 onClick={() => {
                   setSelectedBrands([]);
-                  setPriceRange([0, 500]);
+                  setPriceRange([0, 40000]);
                 }}
               >
                 Reset Filters

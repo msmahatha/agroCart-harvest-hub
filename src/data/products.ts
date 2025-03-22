@@ -1,4 +1,3 @@
-
 export interface Product {
   id: string;
   name: string;
@@ -26,11 +25,10 @@ export const products: Product[] = [
     description: "High-yield wheat seeds perfect for a variety of climate conditions. These premium seeds have been carefully selected to provide optimal growth and resistance to common diseases.",
     price: 129.99,
     salePrice: 99.99,
-    image: "https://images.unsplash.com/photo-1465146344425-f00d5f5c8f07",
+    image: "https://www.bombaysuperseeds.com/images/prod/wheat/bombay-701.webp",
     gallery: [
-      "https://images.unsplash.com/photo-1465146344425-f00d5f5c8f07",
-      "https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9",
-      "https://images.unsplash.com/photo-1513836279014-a89f7a76ae86"
+      "https://www.bombaysuperseeds.com/images/prod/wheat/bombay-701.webp",
+      "https://m.media-amazon.com/images/I/714xCG6CxKL._AC_UF1000,1000_QL80_.jpg"
     ],
     categoryId: "cat_seeds",
     stock: 120,
@@ -54,7 +52,7 @@ export const products: Product[] = [
     name: "Organic Compost Fertilizer",
     description: "100% organic compost fertilizer, perfect for all types of plants. Enriches soil and promotes healthy plant growth without harmful chemicals.",
     price: 49.99,
-    image: "https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9",
+    image: "https://encrypted-tbn3.gstatic.com/shopping?q=tbn:ANd9GcRzn8rANYWyXBRITuA4bgClVukHJQC5J-Y055x04A1ILsaKKFt-LXzEw_Qym24UhOakz7vXBws3dE1JNOhG3xjjNgoJgw_M0Ee8fvhgWfZqjQnDRLMmmhDmHg&usqp=CAE",
     categoryId: "cat_fertilizers",
     stock: 85,
     rating: 4.9,
@@ -78,7 +76,7 @@ export const products: Product[] = [
     description: "Complete drip irrigation system for efficient water usage. Perfect for small to medium gardens and farms.",
     price: 259.99,
     salePrice: 199.99,
-    image: "https://images.unsplash.com/photo-1513836279014-a89f7a76ae86",
+    image: "https://encrypted-tbn1.gstatic.com/shopping?q=tbn:ANd9GcSgKS13DVu4iPtM3l0oqRZNt2YgLfOUvDvle_uUm53ZME8KUmnlXeE83qCfaiFpccFWIWRdXKmVK4vUdbv4_qVMkJOaIqEHqMHTQiejdpOyCPpjFrqiey4L&usqp=CAE",
     categoryId: "cat_irrigation",
     stock: 32,
     rating: 4.7,
@@ -100,7 +98,7 @@ export const products: Product[] = [
     name: "Premium Garden Tool Set",
     description: "Complete set of high-quality garden tools made with durable materials. Includes pruners, trowel, fork, and more.",
     price: 89.99,
-    image: "https://images.unsplash.com/photo-1472396961693-142e6e269027",
+    image: "https://encrypted-tbn3.gstatic.com/shopping?q=tbn:ANd9GcSjWHiRD7LY0xhMGJCQsOw4Gk-G7fwQpmULygvSRc2oWfcmVzk9PmNED1orAygnkKXXyNwLFA2UnEiaeCvb4bnon-Jf4yKO9iVJhJm1vLCScbANEzhdCK333w&usqp=CAE",
     categoryId: "cat_tools",
     stock: 45,
     rating: 4.6,
@@ -122,7 +120,7 @@ export const products: Product[] = [
     name: "Eco-Friendly Pest Control Spray",
     description: "Natural pest control solution that's safe for beneficial insects and the environment. Effective against common garden pests.",
     price: 32.99,
-    image: "https://images.unsplash.com/photo-1466721591366-2d5fba72006d",
+    image: "https://encrypted-tbn1.gstatic.com/shopping?q=tbn:ANd9GcRxJlwghNpKI-XxLr7QVxAoSXj_PM3CrRnclGnJ8oWpNWks32OPJsiKNb1DZQVmNLquEVuqz_1sXkfWKSbF4_c3FRR8fMjFn5v4OgUowLiaiTAxNIrX7hTzUw&usqp=CAE",
     categoryId: "cat_pesticides",
     stock: 110,
     rating: 4.4,
@@ -146,7 +144,7 @@ export const products: Product[] = [
     description: "Compact and powerful cultivator for small farms and large gardens. Easy to operate and maintain.",
     price: 699.99,
     salePrice: 599.99,
-    image: "https://images.unsplash.com/photo-1493962853295-0fd70327578a",
+    image: "https://rukminim2.flixcart.com/image/850/1000/xif0q/grass-trimmer/u/j/5/manual-63cc-mini-power-tiller-cultivator-weeder-used-for-weeding-original-imah4gp4z4qezbur.jpeg?q=90&crop=false",
     categoryId: "cat_machinery",
     stock: 15,
     rating: 4.7,
@@ -168,7 +166,7 @@ export const products: Product[] = [
     name: "Organic Tomato Seeds",
     description: "Heirloom tomato seeds grown organically for the best flavor and yield. Perfect for home gardens.",
     price: 19.99,
-    image: "https://images.unsplash.com/photo-1469041797191-50ace28483c3",
+    image: "https://encrypted-tbn3.gstatic.com/shopping?q=tbn:ANd9GcQaSMYj7RT1YilLTrG06aG28W88YZcinigfdKFabt-j5izt9_5EYscak9RNCaf_xrwNc_IpJPOWlBUcypBjVh34rnY7tSQ8g87PKUvsZLeJaYPkvGVrEAcT2yXr&usqp=CAE",
     categoryId: "cat_seeds",
     stock: 78,
     rating: 4.9,
@@ -191,7 +189,7 @@ export const products: Product[] = [
     name: "Professional Pruning Shears",
     description: "High-quality pruning shears with ergonomic design for comfortable use. Perfect for precision cutting of branches and stems.",
     price: 45.99,
-    image: "https://images.unsplash.com/photo-1452378174528-3090a4bba7b2",
+    image: "https://m.media-amazon.com/images/I/61IrWWyEjvL._AC_UF1000,1000_QL80_.jpg",
     categoryId: "cat_tools",
     stock: 62,
     rating: 4.8,

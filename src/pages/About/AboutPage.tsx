@@ -7,7 +7,7 @@ import { Leaf } from 'lucide-react';
 const AboutPage: React.FC = () => {
   return (
     <div className="container mx-auto py-20 px-4">
-      <h1 className="text-3xl font-display font-bold mb-8">About AgroCart</h1>
+      <h1 className="text-3xl font-display font-bold mb-8">About AgroKart</h1>
       
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2">
@@ -19,7 +19,7 @@ const AboutPage: React.FC = () => {
             </CardHeader>
             <CardContent className="space-y-4">
               <p>
-                Founded in 2020, AgroCart began with a simple mission: to bridge the gap between farmers and quality agricultural products. What started as a small operation in Barasat has grown into a trusted name in agricultural supplies across India.
+                Founded in 2020, AgroKart began with a simple mission: to bridge the gap between farmers and quality agricultural products. What started as a small operation in Barasat has grown into a trusted name in agricultural supplies across India.
               </p>
               <p>
                 As farmers ourselves, we understand the challenges of finding reliable, high-quality products at fair prices. That's why we've built our business on the principles of quality, affordability, and excellent customer service.
@@ -69,7 +69,7 @@ const AboutPage: React.FC = () => {
                 <div className="w-24 h-24 rounded-full bg-primary/10 mx-auto flex items-center justify-center">
                   <Leaf className="h-10 w-10 text-primary" />
                 </div>
-                <h3 className="font-medium mt-2">Ram</h3>
+                <h3 className="font-medium mt-2">Shama</h3>
                 <p className="text-sm text-muted-foreground">Founder & CEO</p>
               </div>
               
@@ -85,7 +85,7 @@ const AboutPage: React.FC = () => {
                 <p className="text-sm mt-2">
                   <strong>Contact:</strong><br />
                   Phone: +91 8918787936<br />
-                  Email: contact@agrocart.com
+                  Email: contact@agroKart.com
                 </p>
               </div>
             </CardContent>
