@@ -21,7 +21,7 @@ const productSchema = z.object({
   description: z.string().min(10, "Description must be at least 10 characters"),
   price: z.coerce.number().min(1, "Price must be at least 1"),
   image: z.string().url("Must be a valid URL"),
-  category: z.string().min(1, "Category is required"),
+  categoryId: z.string().min(1, "Category is required"),
   stock: z.coerce.number().min(0, "Stock cannot be negative"),
   discount: z.coerce.number().min(0, "Discount cannot be negative").max(100, "Discount cannot exceed 100%"),
   brand: z.string().optional(),
@@ -43,9 +43,9 @@ const ProductForm = () => {
       description: "",
       price: 0,
       image: "",
-      category: "",
+      categoryId: "",
       stock: 0,
-      discount: 0,
+      discount: 0,  // This is a new field we're adding
       brand: "",
       rating: 4,
     },
@@ -57,15 +57,20 @@ const ProductForm = () => {
       const product = productsData.find(p => p.id === id);
       
       if (product) {
+        // Calculate discount if salePrice exists
+        const discount = product.salePrice 
+          ? Math.round(((product.price - product.salePrice) / product.price) * 100) 
+          : 0;
+          
         // Populate the form with product data
         form.reset({
           name: product.name,
           description: product.description,
           price: product.price,
           image: product.image,
-          category: product.category,
+          categoryId: product.categoryId,
           stock: product.stock || 10,
-          discount: product.discount || 0,
+          discount: discount,
           brand: product.brand || "",
           rating: product.rating || 4,
         });
@@ -195,7 +200,7 @@ const ProductForm = () => {
                 
                 <FormField
                   control={form.control}
-                  name="category"
+                  name="categoryId"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Category</FormLabel>
@@ -209,7 +214,7 @@ const ProductForm = () => {
                           </SelectTrigger>
                           <SelectContent>
                             {categories.map(cat => (
-                              <SelectItem key={cat.id} value={cat.name}>
+                              <SelectItem key={cat.id} value={cat.id}>
                                 {cat.name}
                               </SelectItem>
                             ))}

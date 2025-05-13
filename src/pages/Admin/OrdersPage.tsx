@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
@@ -16,6 +15,15 @@ import {
   DialogTitle
 } from "@/components/ui/dialog";
 import { Separator } from '@/components/ui/separator';
+import { Json } from '@/integrations/supabase/types';
+
+interface OrderItem {
+  id: string;
+  name: string;
+  price: number;
+  quantity: number;
+  image: string;
+}
 
 interface Order {
   id: string;
@@ -24,13 +32,7 @@ interface Order {
   total: number;
   status: string | null;
   created_at: string;
-  items: {
-    id: string;
-    name: string;
-    price: number;
-    quantity: number;
-    image: string;
-  }[];
+  items: OrderItem[];
 }
 
 const OrdersPage = () => {
@@ -47,7 +49,12 @@ const OrdersPage = () => {
         .order('created_at', { ascending: false });
       
       if (error) throw error;
-      return data as Order[];
+      
+      // Convert the JSON items to properly typed OrderItem[]
+      return (data as any[]).map(order => ({
+        ...order,
+        items: order.items as OrderItem[]
+      })) as Order[];
     }
   });
 

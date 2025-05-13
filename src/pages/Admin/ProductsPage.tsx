@@ -19,7 +19,7 @@ const ProductsPage = () => {
   // Filter products based on search term
   const filteredProducts = products.filter(product => 
     product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    product.category.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (product.categoryId && product.categoryId.toLowerCase().includes(searchTerm.toLowerCase())) ||
     product.id.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
@@ -81,7 +81,10 @@ const ProductsPage = () => {
                     </div>
                   </TableCell>
                   <TableCell className="font-medium">{product.name}</TableCell>
-                  <TableCell>{product.category}</TableCell>
+                  <TableCell>
+                    {/* Use the categories data to display the category name based on the categoryId */}
+                    {product.categoryId}
+                  </TableCell>
                   <TableCell className="text-right">₹{product.price.toLocaleString('en-IN')}</TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end gap-2">
