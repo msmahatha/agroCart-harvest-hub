@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
@@ -5,7 +6,19 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Search, Package, Loader2, Eye } from 'lucide-react';
+import { 
+  Search, 
+  Package, 
+  Loader2, 
+  Eye, 
+  ShoppingBag, 
+  User, 
+  Calendar, 
+  Tag, 
+  Truck,
+  Receipt,
+  CreditCard
+} from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { formatDistanceToNow } from 'date-fns';
 import {
@@ -91,7 +104,10 @@ const OrdersPage = () => {
 
   return (
     <div>
-      <h1 className="text-3xl font-bold mb-6">Orders</h1>
+      <div className="flex items-center gap-2 mb-6">
+        <ShoppingBag className="h-6 w-6 text-primary" />
+        <h1 className="text-3xl font-bold">Orders</h1>
+      </div>
       
       <Card className="mb-6">
         <div className="p-4">
@@ -131,24 +147,37 @@ const OrdersPage = () => {
                     {order.id.slice(0, 8)}...
                   </TableCell>
                   <TableCell>
-                    <div>
-                      <div>{order.user_name || 'Guest'}</div>
-                      <div className="text-sm text-muted-foreground">{order.user_email || 'No email'}</div>
+                    <div className="flex items-center gap-1">
+                      <User className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                      <div>
+                        <div>{order.user_name || 'Guest'}</div>
+                        <div className="text-sm text-muted-foreground">{order.user_email || 'No email'}</div>
+                      </div>
                     </div>
                   </TableCell>
                   <TableCell>
-                    {formatDistanceToNow(new Date(order.created_at), { addSuffix: true })}
+                    <div className="flex items-center gap-1">
+                      <Calendar className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                      {formatDistanceToNow(new Date(order.created_at), { addSuffix: true })}
+                    </div>
                   </TableCell>
                   <TableCell>
                     <Badge 
                       variant="outline" 
                       className={getStatusBadgeColor(order.status)}
                     >
+                      {order.status === 'shipped' && <Truck className="h-3 w-3 mr-1" />}
+                      {order.status === 'completed' && <Tag className="h-3 w-3 mr-1" />}
+                      {order.status === 'cancelled' && <Receipt className="h-3 w-3 mr-1" />}
+                      {order.status === 'processing' && <Loader2 className="h-3 w-3 mr-1 animate-spin" />}
                       {order.status || 'Pending'}
                     </Badge>
                   </TableCell>
                   <TableCell className="text-right">
-                    ₹{order.total.toLocaleString('en-IN')}
+                    <div className="flex items-center justify-end gap-1">
+                      <CreditCard className="h-4 w-4 text-muted-foreground" />
+                      ₹{order.total.toLocaleString('en-IN')}
+                    </div>
                   </TableCell>
                   <TableCell className="text-right">
                     <Button 
@@ -179,25 +208,36 @@ const OrdersPage = () => {
         <Dialog open={!!viewOrder} onOpenChange={() => setViewOrder(null)}>
           <DialogContent className="max-w-3xl">
             <DialogHeader>
-              <DialogTitle>Order Details</DialogTitle>
+              <div className="flex items-center gap-2">
+                <ShoppingBag className="h-5 w-5 text-primary" />
+                <DialogTitle>Order Details</DialogTitle>
+              </div>
             </DialogHeader>
             
             <div className="grid grid-cols-2 gap-4 mb-4">
               <div>
-                <h4 className="text-sm font-medium text-muted-foreground mb-1">Order ID</h4>
+                <h4 className="text-sm font-medium text-muted-foreground mb-1 flex items-center gap-1">
+                  <Receipt className="h-4 w-4" /> Order ID
+                </h4>
                 <p className="font-mono">{viewOrder.id}</p>
               </div>
               <div>
-                <h4 className="text-sm font-medium text-muted-foreground mb-1">Date</h4>
+                <h4 className="text-sm font-medium text-muted-foreground mb-1 flex items-center gap-1">
+                  <Calendar className="h-4 w-4" /> Date
+                </h4>
                 <p>{new Date(viewOrder.created_at).toLocaleString()}</p>
               </div>
               <div>
-                <h4 className="text-sm font-medium text-muted-foreground mb-1">Customer</h4>
+                <h4 className="text-sm font-medium text-muted-foreground mb-1 flex items-center gap-1">
+                  <User className="h-4 w-4" /> Customer
+                </h4>
                 <p>{viewOrder.user_name || 'Guest'}</p>
                 <p className="text-sm text-muted-foreground">{viewOrder.user_email || 'No email'}</p>
               </div>
               <div>
-                <h4 className="text-sm font-medium text-muted-foreground mb-1">Status</h4>
+                <h4 className="text-sm font-medium text-muted-foreground mb-1 flex items-center gap-1">
+                  <Tag className="h-4 w-4" /> Status
+                </h4>
                 <Badge 
                   variant="outline" 
                   className={getStatusBadgeColor(viewOrder.status)}
@@ -209,7 +249,9 @@ const OrdersPage = () => {
             
             <Separator className="my-4" />
             
-            <h3 className="font-semibold mb-2">Order Items</h3>
+            <h3 className="font-semibold mb-2 flex items-center gap-1">
+              <Package className="h-5 w-5" /> Order Items
+            </h3>
             <div className="space-y-4">
               {viewOrder.items.map((item) => (
                 <div key={item.id} className="flex items-center gap-4">

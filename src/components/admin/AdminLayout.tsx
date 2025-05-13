@@ -4,7 +4,16 @@ import { useNavigate, Outlet } from 'react-router-dom';
 import { useAdmin } from '@/context/AdminContext';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import { LogOut, Menu, Package, ShoppingBag, UserCog } from 'lucide-react';
+import { 
+  LogOut, 
+  Menu, 
+  Package, 
+  ShoppingBag, 
+  Settings, 
+  LayoutDashboard,
+  User,
+  AlertCircle
+} from 'lucide-react';
 
 const AdminLayout = () => {
   const { adminUser, logout } = useAdmin();
@@ -83,7 +92,7 @@ const AdminSidebar = ({ onLogout }: { onLogout: () => void }) => {
   const menuItems = [
     { 
       title: 'Dashboard', 
-      icon: <ShoppingBag className="h-4 w-4 mr-3" />, 
+      icon: <LayoutDashboard className="h-4 w-4 mr-3" />, 
       onClick: () => navigate('/admin/dashboard') 
     },
     { 
@@ -98,7 +107,7 @@ const AdminSidebar = ({ onLogout }: { onLogout: () => void }) => {
     },
     { 
       title: 'Settings', 
-      icon: <UserCog className="h-4 w-4 mr-3" />, 
+      icon: <Settings className="h-4 w-4 mr-3" />, 
       onClick: () => navigate('/admin/settings') 
     },
   ];

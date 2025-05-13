@@ -7,8 +7,13 @@ import { Input } from '@/components/ui/input';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { Separator } from '@/components/ui/separator';
+import { Settings, Mail, Lock, Save, Eye, EyeOff } from 'lucide-react';
 
 const SettingsPage = () => {
+  const [showPassword, setShowPassword] = React.useState(false);
+  const [showNewPassword, setShowNewPassword] = React.useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = React.useState(false);
+
   const form = useForm({
     defaultValues: {
       email: 'admin@agrokart.com',
@@ -42,13 +47,19 @@ const SettingsPage = () => {
 
   return (
     <div>
-      <h1 className="text-3xl font-bold mb-6">Settings</h1>
+      <div className="flex items-center gap-2 mb-6">
+        <Settings className="h-6 w-6 text-primary" />
+        <h1 className="text-3xl font-bold">Settings</h1>
+      </div>
       
       <div className="space-y-6">
         <Card>
-          <CardHeader>
-            <CardTitle>Account Settings</CardTitle>
-            <CardDescription>Manage your admin account settings</CardDescription>
+          <CardHeader className="flex flex-row items-start gap-2">
+            <Mail className="h-5 w-5 mt-1 text-primary" />
+            <div>
+              <CardTitle>Account Settings</CardTitle>
+              <CardDescription>Manage your admin account settings</CardDescription>
+            </div>
           </CardHeader>
           <CardContent>
             <Form {...form}>
@@ -58,7 +69,10 @@ const SettingsPage = () => {
                   name="email"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Admin Email</FormLabel>
+                      <FormLabel className="flex items-center gap-1">
+                        <Mail className="h-4 w-4" />
+                        Admin Email
+                      </FormLabel>
                       <FormControl>
                         <Input {...field} disabled />
                       </FormControl>
@@ -70,7 +84,10 @@ const SettingsPage = () => {
                 />
                 
                 <Separator />
-                <h3 className="text-lg font-medium">Change Password</h3>
+                <div className="flex items-center gap-2">
+                  <Lock className="h-5 w-5 text-primary" />
+                  <h3 className="text-lg font-medium">Change Password</h3>
+                </div>
                 
                 <FormField
                   control={form.control}
@@ -79,7 +96,21 @@ const SettingsPage = () => {
                     <FormItem>
                       <FormLabel>Current Password</FormLabel>
                       <FormControl>
-                        <Input type="password" {...field} />
+                        <div className="relative">
+                          <Input 
+                            type={showPassword ? "text" : "password"} 
+                            {...field} 
+                          />
+                          <Button 
+                            type="button"
+                            variant="ghost" 
+                            size="icon" 
+                            className="absolute right-0 top-0 h-full"
+                            onClick={() => setShowPassword(!showPassword)}
+                          >
+                            {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                          </Button>
+                        </div>
                       </FormControl>
                     </FormItem>
                   )}
@@ -92,7 +123,21 @@ const SettingsPage = () => {
                     <FormItem>
                       <FormLabel>New Password</FormLabel>
                       <FormControl>
-                        <Input type="password" {...field} />
+                        <div className="relative">
+                          <Input 
+                            type={showNewPassword ? "text" : "password"} 
+                            {...field} 
+                          />
+                          <Button 
+                            type="button"
+                            variant="ghost" 
+                            size="icon" 
+                            className="absolute right-0 top-0 h-full"
+                            onClick={() => setShowNewPassword(!showNewPassword)}
+                          >
+                            {showNewPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                          </Button>
+                        </div>
                       </FormControl>
                     </FormItem>
                   )}
@@ -105,14 +150,31 @@ const SettingsPage = () => {
                     <FormItem>
                       <FormLabel>Confirm New Password</FormLabel>
                       <FormControl>
-                        <Input type="password" {...field} />
+                        <div className="relative">
+                          <Input 
+                            type={showConfirmPassword ? "text" : "password"} 
+                            {...field} 
+                          />
+                          <Button 
+                            type="button"
+                            variant="ghost" 
+                            size="icon" 
+                            className="absolute right-0 top-0 h-full"
+                            onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                          >
+                            {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                          </Button>
+                        </div>
                       </FormControl>
                     </FormItem>
                   )}
                 />
                 
                 <div className="flex justify-end">
-                  <Button type="submit">Save Changes</Button>
+                  <Button type="submit">
+                    <Save className="h-4 w-4 mr-2" />
+                    Save Changes
+                  </Button>
                 </div>
               </form>
             </Form>

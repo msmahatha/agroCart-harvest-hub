@@ -5,7 +5,20 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent } from '@/components/ui/card';
-import { Loader2, ArrowLeft } from 'lucide-react';
+import { 
+  Loader2, 
+  ArrowLeft, 
+  Save, 
+  Tag, 
+  FileText, 
+  Image, 
+  DollarSign, 
+  Bookmark, 
+  BarChart4, 
+  PenTool, 
+  Package, 
+  Star 
+} from 'lucide-react';
 import { products as productsData } from '@/data/products';
 import { toast } from 'sonner';
 import { categories } from '@/data/categories';
@@ -111,7 +124,10 @@ const ProductForm = () => {
           <ArrowLeft className="h-4 w-4 mr-2" />
           Back to Products
         </Button>
-        <h1 className="text-3xl font-bold">{isEditing ? "Edit Product" : "Add New Product"}</h1>
+        <div className="flex items-center gap-2">
+          <Package className="h-6 w-6 text-primary" />
+          <h1 className="text-3xl font-bold">{isEditing ? "Edit Product" : "Add New Product"}</h1>
+        </div>
       </div>
       
       <Card>
@@ -124,7 +140,10 @@ const ProductForm = () => {
                   name="name"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Product Name</FormLabel>
+                      <FormLabel className="flex items-center gap-1">
+                        <Tag className="h-4 w-4" />
+                        Product Name
+                      </FormLabel>
                       <FormControl>
                         <Input {...field} placeholder="Enter product name" />
                       </FormControl>
@@ -138,7 +157,10 @@ const ProductForm = () => {
                   name="price"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Price (₹)</FormLabel>
+                      <FormLabel className="flex items-center gap-1">
+                        <DollarSign className="h-4 w-4" />
+                        Price (₹)
+                      </FormLabel>
                       <FormControl>
                         <Input 
                           type="number" 
@@ -158,7 +180,10 @@ const ProductForm = () => {
                 name="description"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Description</FormLabel>
+                    <FormLabel className="flex items-center gap-1">
+                      <FileText className="h-4 w-4" />
+                      Description
+                    </FormLabel>
                     <FormControl>
                       <Textarea 
                         {...field} 
@@ -177,7 +202,10 @@ const ProductForm = () => {
                   name="image"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Product Image URL</FormLabel>
+                      <FormLabel className="flex items-center gap-1">
+                        <Image className="h-4 w-4" />
+                        Product Image URL
+                      </FormLabel>
                       <FormControl>
                         <Input {...field} placeholder="https://example.com/image.jpg" />
                       </FormControl>
@@ -203,7 +231,10 @@ const ProductForm = () => {
                   name="categoryId"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Category</FormLabel>
+                      <FormLabel className="flex items-center gap-1">
+                        <Bookmark className="h-4 w-4" />
+                        Category
+                      </FormLabel>
                       <FormControl>
                         <Select
                           onValueChange={field.onChange}
@@ -233,7 +264,10 @@ const ProductForm = () => {
                   name="stock"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Stock</FormLabel>
+                      <FormLabel className="flex items-center gap-1">
+                        <BarChart4 className="h-4 w-4" />
+                        Stock
+                      </FormLabel>
                       <FormControl>
                         <Input type="number" {...field} />
                       </FormControl>
@@ -247,7 +281,10 @@ const ProductForm = () => {
                   name="discount"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Discount (%)</FormLabel>
+                      <FormLabel className="flex items-center gap-1">
+                        <PenTool className="h-4 w-4" />
+                        Discount (%)
+                      </FormLabel>
                       <FormControl>
                         <Input type="number" {...field} min="0" max="100" />
                       </FormControl>
@@ -261,7 +298,10 @@ const ProductForm = () => {
                   name="brand"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Brand (optional)</FormLabel>
+                      <FormLabel className="flex items-center gap-1">
+                        <Bookmark className="h-4 w-4" />
+                        Brand (optional)
+                      </FormLabel>
                       <FormControl>
                         <Input {...field} placeholder="Brand name" />
                       </FormControl>
@@ -276,7 +316,10 @@ const ProductForm = () => {
                 name="rating"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Rating (0-5)</FormLabel>
+                    <FormLabel className="flex items-center gap-1">
+                      <Star className="h-4 w-4" />
+                      Rating (0-5)
+                    </FormLabel>
                     <FormControl>
                       <Input 
                         type="number" 
@@ -303,7 +346,7 @@ const ProductForm = () => {
                   Cancel
                 </Button>
                 <Button type="submit" disabled={isSubmitting}>
-                  {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                  {isSubmitting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />}
                   {isEditing ? "Update Product" : "Create Product"}
                 </Button>
               </div>

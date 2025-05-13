@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Plus, Search, Edit, Trash, Package } from 'lucide-react';
+import { Plus, Search, Edit, Trash, Package, FileText, Tag, Filter, SortAsc } from 'lucide-react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { products as productsData } from '@/data/products';
 import { Card } from '@/components/ui/card';
@@ -35,7 +35,10 @@ const ProductsPage = () => {
   return (
     <div>
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
-        <h1 className="text-3xl font-bold">Products</h1>
+        <div className="flex items-center gap-2">
+          <Tag className="h-6 w-6 text-primary" />
+          <h1 className="text-3xl font-bold">Products</h1>
+        </div>
         <Button onClick={() => navigate('/admin/products/new')}>
           <Plus className="mr-2 h-4 w-4" />
           Add Product
@@ -92,6 +95,7 @@ const ProductsPage = () => {
                         variant="ghost" 
                         size="icon"
                         onClick={() => navigate(`/admin/products/edit/${product.id}`)}
+                        title="Edit Product"
                       >
                         <Edit className="h-4 w-4" />
                         <span className="sr-only">Edit</span>
@@ -101,6 +105,7 @@ const ProductsPage = () => {
                         size="icon"
                         className="text-red-500 hover:text-red-700 hover:bg-red-50"
                         onClick={() => setProductToDelete(product.id)}
+                        title="Delete Product"
                       >
                         <Trash className="h-4 w-4" />
                         <span className="sr-only">Delete</span>
@@ -139,6 +144,7 @@ const ProductsPage = () => {
               Cancel
             </Button>
             <Button variant="destructive" onClick={handleDeleteProduct}>
+              <Trash className="h-4 w-4 mr-2" />
               Delete
             </Button>
           </DialogFooter>

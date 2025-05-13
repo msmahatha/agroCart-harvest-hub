@@ -3,7 +3,16 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Package, ShoppingBag, Users } from 'lucide-react';
+import { 
+  Package, 
+  ShoppingBag, 
+  Users, 
+  LayoutDashboard, 
+  TrendingUp, 
+  Truck, 
+  PlusCircle,
+  ClipboardList
+} from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { products } from '@/data/products';
@@ -57,7 +66,10 @@ const AdminDashboard = () => {
 
   return (
     <div>
-      <h1 className="text-3xl font-bold mb-6">Dashboard</h1>
+      <div className="flex items-center gap-2 mb-6">
+        <LayoutDashboard className="h-6 w-6 text-primary" />
+        <h1 className="text-3xl font-bold">Dashboard</h1>
+      </div>
       
       {/* Stats Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
@@ -81,15 +93,20 @@ const AdminDashboard = () => {
 
       {/* Quick Actions */}
       <Card>
-        <CardHeader>
-          <CardTitle>Quick Actions</CardTitle>
-          <CardDescription>Manage your store with these shortcuts</CardDescription>
+        <CardHeader className="flex flex-row items-center gap-2">
+          <TrendingUp className="h-5 w-5 text-primary" />
+          <div>
+            <CardTitle>Quick Actions</CardTitle>
+            <CardDescription>Manage your store with these shortcuts</CardDescription>
+          </div>
         </CardHeader>
         <CardContent className="flex flex-wrap gap-4">
           <Button onClick={() => navigate('/admin/products/new')}>
+            <PlusCircle className="h-4 w-4 mr-2" />
             Add New Product
           </Button>
           <Button variant="outline" onClick={() => navigate('/admin/orders')}>
+            <ClipboardList className="h-4 w-4 mr-2" />
             View Recent Orders
           </Button>
         </CardContent>
