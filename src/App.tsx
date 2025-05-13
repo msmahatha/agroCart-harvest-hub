@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -21,6 +22,16 @@ import ContactPage from "./pages/Contact/ContactPage";
 import { CartProvider } from "./context/CartContext";
 import { AuthProvider } from "./context/AuthContext";
 import { WishlistProvider } from "./context/WishlistContext";
+import { AdminProvider } from "./context/AdminContext";
+
+// Admin Pages
+import AdminLayout from "./components/admin/AdminLayout";
+import AdminLoginPage from "./pages/Admin/AdminLoginPage";
+import AdminDashboard from "./pages/Admin/AdminDashboard";
+import ProductsPage from "./pages/Admin/ProductsPage";
+import ProductForm from "./pages/Admin/ProductForm";
+import AdminOrdersPage from "./pages/Admin/OrdersPage";
+import AdminSettingsPage from "./pages/Admin/SettingsPage";
 
 const queryClient = new QueryClient();
 
@@ -30,42 +41,56 @@ const App = () => (
       <AuthProvider>
         <CartProvider>
           <WishlistProvider>
-            <Toaster />
-            <Sonner />
-            <BrowserRouter>
-              <Layout>
+            <AdminProvider>
+              <Toaster />
+              <Sonner />
+              <BrowserRouter>
                 <Routes>
-                  <Route path="/" element={<Index />} />
+                  {/* Admin Routes */}
+                  <Route path="/admin/login" element={<AdminLoginPage />} />
+                  <Route path="/admin" element={<AdminLayout />}>
+                    <Route path="dashboard" element={<AdminDashboard />} />
+                    <Route path="products" element={<ProductsPage />} />
+                    <Route path="products/new" element={<ProductForm />} />
+                    <Route path="products/edit/:id" element={<ProductForm />} />
+                    <Route path="orders" element={<AdminOrdersPage />} />
+                    <Route path="settings" element={<AdminSettingsPage />} />
+                  </Route>
                   
-                  {/* Authentication Routes */}
-                  <Route path="/login" element={<LoginPage />} />
-                  <Route path="/signup" element={<SignupPage />} />
-                  <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-                  
-                  {/* Product Routes */}
-                  <Route path="/products" element={<ProductCatalogPage />} />
-                  <Route path="/products/category/:categorySlug" element={<ProductCatalogPage />} />
-                  <Route path="/products/search" element={<ProductCatalogPage />} />
-                  <Route path="/product/:slug" element={<ProductDetailPage />} />
-                  
-                  {/* Cart Routes */}
-                  <Route path="/cart" element={<CartPage />} />
-                  
-                  {/* Profile Routes */}
-                  <Route path="/profile" element={<ProfilePage />} />
-                  <Route path="/orders" element={<OrdersPage />} />
-                  <Route path="/wishlist" element={<WishlistPage />} />
-                  <Route path="/settings" element={<SettingsPage />} />
-                  
-                  {/* Static Pages */}
-                  <Route path="/about" element={<AboutPage />} />
-                  <Route path="/contact" element={<ContactPage />} />
-                  
-                  {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-                  <Route path="*" element={<NotFound />} />
+                  {/* Customer Routes */}
+                  <Route path="/" element={<Layout />}>
+                    <Route index element={<Index />} />
+                    
+                    {/* Authentication Routes */}
+                    <Route path="login" element={<LoginPage />} />
+                    <Route path="signup" element={<SignupPage />} />
+                    <Route path="forgot-password" element={<ForgotPasswordPage />} />
+                    
+                    {/* Product Routes */}
+                    <Route path="products" element={<ProductCatalogPage />} />
+                    <Route path="products/category/:categorySlug" element={<ProductCatalogPage />} />
+                    <Route path="products/search" element={<ProductCatalogPage />} />
+                    <Route path="product/:slug" element={<ProductDetailPage />} />
+                    
+                    {/* Cart Routes */}
+                    <Route path="cart" element={<CartPage />} />
+                    
+                    {/* Profile Routes */}
+                    <Route path="profile" element={<ProfilePage />} />
+                    <Route path="orders" element={<OrdersPage />} />
+                    <Route path="wishlist" element={<WishlistPage />} />
+                    <Route path="settings" element={<SettingsPage />} />
+                    
+                    {/* Static Pages */}
+                    <Route path="about" element={<AboutPage />} />
+                    <Route path="contact" element={<ContactPage />} />
+                    
+                    {/* Catch-all */}
+                    <Route path="*" element={<NotFound />} />
+                  </Route>
                 </Routes>
-              </Layout>
-            </BrowserRouter>
+              </BrowserRouter>
+            </AdminProvider>
           </WishlistProvider>
         </CartProvider>
       </AuthProvider>
