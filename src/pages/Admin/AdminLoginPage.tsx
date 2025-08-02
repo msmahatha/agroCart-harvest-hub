@@ -12,6 +12,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from '@/components/ui/use-toast';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { useAuth } from '@/context/AuthContext';
 
 const adminLoginSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email address" }),
@@ -22,6 +23,7 @@ type AdminLoginFormValues = z.infer<typeof adminLoginSchema>;
 
 const AdminLoginPage = () => {
   const navigate = useNavigate();
+  const { login } = useAuth();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const [loginError, setLoginError] = useState<string | null>(null);
@@ -39,34 +41,33 @@ const AdminLoginPage = () => {
     setLoginError(null);
     
     try {
-      // Check if admin credentials are valid
-      const { data: adminUsers, error } = await supabase
-        .from('admin_users')
-        .select('*')
-        .eq('email', data.email)
-        .eq('password_hash', data.password)
-        .single();
+      // Use the regular authentication system
+      const success = await login(data.email, data.password);
       
-      if (error || !adminUsers) {
-        setLoginError("Invalid admin credentials. Please try again.");
-        setIsLoading(false);
-        return;
+      if (success) {
+        // Check if the logged-in user is an admin
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) {
+          const { data: profile } = await supabase
+            .from('profiles')
+            .select('role')
+            .eq('id', user.id)
+            .single();
+          
+          if (profile?.role === 'admin') {
+            toast({
+              title: "Admin login successful",
+              description: "Welcome to the admin dashboard",
+            });
+            navigate('/admin/dashboard');
+          } else {
+            setLoginError("Access denied. Admin privileges required.");
+            await supabase.auth.signOut();
+          }
+        }
+      } else {
+        setLoginError("Invalid credentials. Please try again.");
       }
-      
-      // Store admin session in localStorage
-      localStorage.setItem('adminSession', JSON.stringify({
-        id: adminUsers.id,
-        email: adminUsers.email,
-        isAdmin: true,
-        timestamp: new Date().toISOString()
-      }));
-      
-      toast({
-        title: "Login successful",
-        description: "Welcome to the admin dashboard",
-      });
-      
-      navigate('/admin/dashboard');
     } catch (error) {
       console.error("Admin login error:", error);
       setLoginError("An unexpected error occurred. Please try again.");
@@ -91,9 +92,9 @@ const AdminLoginPage = () => {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <Alert className="mb-4 bg-amber-50 border-amber-200">
+          <Alert className="mb-4 bg-blue-50 border-blue-200">
             <AlertDescription>
-              Default admin login: admin@agrokart.com / admin123
+              To create an admin account, sign up with email: admin@agrocart.com
             </AlertDescription>
           </Alert>
           

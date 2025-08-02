@@ -4,13 +4,16 @@ import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { User, Session } from '@supabase/supabase-js';
 
+interface Profile {
+  id: string;
+  name: string;
+  email: string;
+  role: string;
+  avatar?: string | null;
+}
+
 interface AuthContextProps {
-  user: {
-    id: string;
-    name: string;
-    email: string;
-    avatar: string | null;
-  } | null;
+  user: Profile | null;
   session: Session | null;
   loading: boolean;
   login: (email: string, password: string) => Promise<boolean>;
@@ -31,25 +34,64 @@ export const useAuth = () => useContext(AuthContext);
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [session, setSession] = useState<Session | null>(null);
-  const [user, setUser] = useState<AuthContextProps["user"]>(null);
+  const [user, setUser] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
 
+  // Helper function to fetch user profile
+  const fetchUserProfile = async (userId: string): Promise<Profile | null> => {
+    try {
+      const { data: profile, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', userId)
+        .single();
+      
+      if (error) {
+        console.error('Error fetching profile:', error);
+        return null;
+      }
+      
+      return profile;
+    } catch (error) {
+      console.error('Error fetching profile:', error);
+      return null;
+    }
+  };
+
   useEffect(() => {
-    // Initialize authentication state
+    // Set up auth state listener FIRST
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (event, newSession) => {
+        setSession(newSession);
+        
+        if (newSession?.user) {
+          // Defer profile fetch to avoid deadlock
+          setTimeout(async () => {
+            const profile = await fetchUserProfile(newSession.user.id);
+            if (profile) {
+              setUser(profile);
+            }
+          }, 0);
+        } else {
+          setUser(null);
+        }
+        
+        setLoading(false);
+      }
+    );
+
+    // THEN check for existing session
     const initAuth = async () => {
       try {
-        // Check for existing session
         const { data: { session: currentSession } } = await supabase.auth.getSession();
         setSession(currentSession);
         
         if (currentSession?.user) {
-          setUser({
-            id: currentSession.user.id,
-            name: currentSession.user.user_metadata.name || currentSession.user.email?.split('@')[0] || '',
-            email: currentSession.user.email || '',
-            avatar: null,
-          });
+          const profile = await fetchUserProfile(currentSession.user.id);
+          if (profile) {
+            setUser(profile);
+          }
         }
       } catch (error) {
         console.error('Error initializing auth:', error);
@@ -60,24 +102,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     initAuth();
 
-    // Set up auth state change listener
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (_event, newSession) => {
-        setSession(newSession);
-        
-        if (newSession?.user) {
-          setUser({
-            id: newSession.user.id,
-            name: newSession.user.user_metadata.name || newSession.user.email?.split('@')[0] || '',
-            email: newSession.user.email || '',
-            avatar: null,
-          });
-        } else {
-          setUser(null);
-        }
-      }
-    );
-
     // Cleanup subscription on unmount
     return () => {
       subscription.unsubscribe();
@@ -86,33 +110,28 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const login = async (email: string, password: string): Promise<boolean> => {
     try {
-      // For demo purposes, allow any email with non-empty password to log in
-      if (email && password && password.length >= 6) {
-        // Generate a fake session and user
-        const fakeUserId = `user_${Math.random().toString(36).substring(2, 10)}`;
-        const userName = email.split('@')[0];
-        
-        // Set user manually without actually using Supabase auth
-        setUser({
-          id: fakeUserId,
-          name: userName,
-          email: email,
-          avatar: null,
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (error) {
+        toast({
+          title: "Login failed",
+          description: error.message,
+          variant: "destructive",
         });
-        
+        return false;
+      }
+
+      if (data.user) {
         toast({
           title: "Welcome back!",
           description: "You have successfully logged in.",
         });
-        
         return true;
       }
-      
-      toast({
-        title: "Login failed",
-        description: "Please provide a valid email and password (min 6 characters).",
-        variant: "destructive",
-      });
+
       return false;
     } catch (error) {
       console.error('Unexpected login error:', error);
@@ -127,32 +146,36 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const signup = async (name: string, email: string, password: string): Promise<boolean> => {
     try {
-      // For demo purposes, any valid email and password allows signup
-      if (name && email && password && password.length >= 6) {
-        // Generate a fake user ID
-        const fakeUserId = `user_${Math.random().toString(36).substring(2, 10)}`;
-        
-        // Set user manually without actually using Supabase auth
-        setUser({
-          id: fakeUserId,
-          name: name,
-          email: email,
-          avatar: null,
+      const redirectUrl = `${window.location.origin}/`;
+      
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          emailRedirectTo: redirectUrl,
+          data: {
+            name: name,
+          }
+        }
+      });
+
+      if (error) {
+        toast({
+          title: "Signup failed",
+          description: error.message,
+          variant: "destructive",
         });
-        
+        return false;
+      }
+
+      if (data.user) {
         toast({
           title: "Account created!",
-          description: "Your account has been successfully created.",
+          description: "Please check your email to confirm your account.",
         });
-        
         return true;
       }
-      
-      toast({
-        title: "Signup failed",
-        description: "Please provide a valid name, email, and password (min 6 characters).",
-        variant: "destructive",
-      });
+
       return false;
     } catch (error) {
       console.error('Unexpected signup error:', error);
@@ -167,9 +190,16 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const logout = async () => {
     try {
-      // Simply clear the user state without calling Supabase
-      setUser(null);
-      setSession(null);
+      const { error } = await supabase.auth.signOut();
+      
+      if (error) {
+        toast({
+          title: "Logout failed",
+          description: error.message,
+          variant: "destructive",
+        });
+        return;
+      }
       
       toast({
         title: "Logged out",

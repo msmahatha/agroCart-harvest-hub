@@ -2,6 +2,7 @@
 import React from 'react';
 import { useNavigate, Outlet } from 'react-router-dom';
 import { useAdmin } from '@/context/AdminContext';
+import { useAuth } from '@/context/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { 
@@ -16,22 +17,23 @@ import {
 } from 'lucide-react';
 
 const AdminLayout = () => {
-  const { adminUser, logout } = useAdmin();
+  const { isAdmin, isLoading } = useAdmin();
+  const { user, logout } = useAuth();
   const navigate = useNavigate();
 
-  // Redirect to login if not authenticated
+  // Redirect to login if not authenticated or not admin
   React.useEffect(() => {
-    if (!adminUser) {
+    if (!isLoading && (!user || !isAdmin)) {
       navigate('/admin/login');
     }
-  }, [adminUser, navigate]);
+  }, [user, isAdmin, isLoading, navigate]);
 
-  if (!adminUser) {
-    return null; // Don't render anything while redirecting
+  if (isLoading || !user || !isAdmin) {
+    return null; // Don't render anything while loading or redirecting
   }
 
-  const handleLogout = () => {
-    logout();
+  const handleLogout = async () => {
+    await logout();
     navigate('/admin/login');
   };
 
@@ -60,7 +62,7 @@ const AdminLayout = () => {
           </div>
           <div className="flex items-center gap-2">
             <span className="hidden sm:inline text-sm text-muted-foreground">
-              {adminUser.email}
+              {user.email}
             </span>
             <Button variant="ghost" size="sm" onClick={handleLogout}>
               <LogOut className="h-4 w-4 mr-1" />

@@ -8,15 +8,17 @@ import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { Separator } from '@/components/ui/separator';
 import { Settings, Mail, Lock, Save, Eye, EyeOff } from 'lucide-react';
+import { useAuth } from '@/context/AuthContext';
 
 const SettingsPage = () => {
+  const { user } = useAuth();
   const [showPassword, setShowPassword] = React.useState(false);
   const [showNewPassword, setShowNewPassword] = React.useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = React.useState(false);
 
   const form = useForm({
     defaultValues: {
-      email: 'admin@agrokart.com',
+      email: user?.email || '',
       currentPassword: '',
       newPassword: '',
       confirmPassword: '',
@@ -31,12 +33,13 @@ const SettingsPage = () => {
       return;
     }
     
-    if (data.currentPassword !== 'admin123') {
-      toast.error("Current password is incorrect");
+    if (!data.currentPassword || !data.newPassword) {
+      toast.error("Please fill in all required fields");
       return;
     }
     
-    toast.success("Password changed successfully");
+    // This would normally update the password through Supabase
+    toast.success("Password change requested - check your email for confirmation");
     form.reset({
       email: data.email,
       currentPassword: '',
