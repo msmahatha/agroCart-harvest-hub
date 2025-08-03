@@ -41,7 +41,29 @@ const AdminLoginPage = () => {
     setLoginError(null);
     
     try {
-      // Use the regular authentication system
+      // If it's the specific admin credentials, try to create account first
+      if (data.email === 'admin@agrocart.com' && data.password === 'admin123') {
+        // Try to sign up first (in case account doesn't exist)
+        const { error: signUpError } = await supabase.auth.signUp({
+          email: data.email,
+          password: data.password,
+          options: {
+            emailRedirectTo: `${window.location.origin}/`
+          }
+        });
+        
+        // If signup failed because user already exists, that's fine
+        if (signUpError && !signUpError.message.includes('already registered')) {
+          setLoginError(`Account creation failed: ${signUpError.message}`);
+          setIsLoading(false);
+          return;
+        }
+        
+        // Wait a moment for account creation to complete
+        await new Promise(resolve => setTimeout(resolve, 1000));
+      }
+      
+      // Now try to login
       const success = await login(data.email, data.password);
       
       if (success) {
