@@ -100,7 +100,37 @@ const AdminLoginPage = () => {
                   <p><strong>Email:</strong> <code>admin@agrocart.com</code></p>
                   <p><strong>Password:</strong> <code>admin123</code></p>
                 </div>
-                <p className="text-sm text-blue-600 mt-2">💡 Use these credentials to access the admin dashboard</p>
+                <div className="mt-3">
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={async () => {
+                      try {
+                        const { error } = await supabase.auth.signUp({
+                          email: 'admin@agrocart.com',
+                          password: 'admin123',
+                          options: {
+                            emailRedirectTo: `${window.location.origin}/`
+                          }
+                        });
+                        if (error) {
+                          if (error.message.includes('already registered')) {
+                            toast({ title: "Admin account already exists", description: "You can now login with the credentials above" });
+                          } else {
+                            toast({ title: "Error", description: error.message, variant: "destructive" });
+                          }
+                        } else {
+                          toast({ title: "Admin account created", description: "You can now login with the credentials above" });
+                        }
+                      } catch (err) {
+                        toast({ title: "Error", description: "Failed to create admin account", variant: "destructive" });
+                      }
+                    }}
+                  >
+                    Create Admin Account
+                  </Button>
+                </div>
+                <p className="text-sm text-blue-600 mt-2">💡 Click "Create Admin Account" first, then use the credentials above to login</p>
               </div>
             </AlertDescription>
           </Alert>
