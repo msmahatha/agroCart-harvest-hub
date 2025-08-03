@@ -95,12 +95,12 @@ const AdminLoginPage = () => {
           <Alert className="mb-4 bg-blue-50 border-blue-200">
             <AlertDescription>
               <div className="space-y-2">
-                <p className="font-semibold">🔐 Admin Access Instructions:</p>
-                <p>1. First, <strong>create an admin account</strong> by signing up at the main site with email: <code className="bg-blue-100 px-1 rounded">admin@agrocart.com</code></p>
-                <p>2. Choose your own secure password (min 8 characters)</p>
-                <p>3. Verify your email when prompted</p>
-                <p>4. Return here and login with your credentials</p>
-                <p className="text-sm text-blue-600 mt-2">💡 The system automatically assigns admin role to this email address</p>
+                <p className="font-semibold">🔐 Admin Login Credentials:</p>
+                <div className="bg-blue-100 p-3 rounded-md">
+                  <p><strong>Email:</strong> <code>admin@agrocart.com</code></p>
+                  <p><strong>Password:</strong> <code>admin123</code></p>
+                </div>
+                <p className="text-sm text-blue-600 mt-2">💡 Use these credentials to access the admin dashboard</p>
               </div>
             </AlertDescription>
           </Alert>
