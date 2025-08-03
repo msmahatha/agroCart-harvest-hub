@@ -94,7 +94,14 @@ const AdminLoginPage = () => {
         <CardContent>
           <Alert className="mb-4 bg-blue-50 border-blue-200">
             <AlertDescription>
-              To create an admin account, sign up with email: admin@agrocart.com
+              <div className="space-y-2">
+                <p className="font-semibold">🔐 Admin Access Instructions:</p>
+                <p>1. First, <strong>create an admin account</strong> by signing up at the main site with email: <code className="bg-blue-100 px-1 rounded">admin@agrocart.com</code></p>
+                <p>2. Choose your own secure password (min 8 characters)</p>
+                <p>3. Verify your email when prompted</p>
+                <p>4. Return here and login with your credentials</p>
+                <p className="text-sm text-blue-600 mt-2">💡 The system automatically assigns admin role to this email address</p>
+              </div>
             </AlertDescription>
           </Alert>
           
