@@ -48,7 +48,10 @@ const AdminLoginPage = () => {
           email: data.email,
           password: data.password,
           options: {
-            emailRedirectTo: `${window.location.origin}/`
+            emailRedirectTo: `${window.location.origin}/`,
+            data: {
+              email_confirm: true // This helps with auto-confirmation in development
+            }
           }
         });
         
