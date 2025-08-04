@@ -42,7 +42,7 @@ const AdminLoginPage = () => {
     
     try {
       // If it's the specific admin credentials, try to create account first
-      if (data.email === 'admin@agrocart.com' && data.password === 'admin123') {
+      if (data.email === 'msmahatha007@gmail.com' && data.password === 'admin123') {
         // Try to sign up first (in case account doesn't exist)
         const { error: signUpError } = await supabase.auth.signUp({
           email: data.email,
@@ -119,7 +119,7 @@ const AdminLoginPage = () => {
               <div className="space-y-2">
                 <p className="font-semibold">🔐 Admin Login Credentials:</p>
                 <div className="bg-blue-100 p-3 rounded-md">
-                  <p><strong>Email:</strong> <code>admin@agrocart.com</code></p>
+                  <p><strong>Email:</strong> <code>msmahatha007@gmail.com</code></p>
                   <p><strong>Password:</strong> <code>admin123</code></p>
                 </div>
                 <div className="mt-3">
@@ -129,7 +129,7 @@ const AdminLoginPage = () => {
                     onClick={async () => {
                       try {
                         const { error } = await supabase.auth.signUp({
-                          email: 'admin@agrocart.com',
+                          email: 'msmahatha007@gmail.com',
                           password: 'admin123',
                           options: {
                             emailRedirectTo: `${window.location.origin}/`
