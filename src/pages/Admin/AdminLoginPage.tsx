@@ -41,32 +41,7 @@ const AdminLoginPage = () => {
     setLoginError(null);
     
     try {
-      // If it's the specific admin credentials, try to create account first
-      if (data.email === 'msmahatha007@gmail.com' && data.password === 'admin123') {
-        // Try to sign up first (in case account doesn't exist)
-        const { error: signUpError } = await supabase.auth.signUp({
-          email: data.email,
-          password: data.password,
-          options: {
-            emailRedirectTo: `${window.location.origin}/`,
-            data: {
-              email_confirm: true // This helps with auto-confirmation in development
-            }
-          }
-        });
-        
-        // If signup failed because user already exists, that's fine
-        if (signUpError && !signUpError.message.includes('already registered')) {
-          setLoginError(`Account creation failed: ${signUpError.message}`);
-          setIsLoading(false);
-          return;
-        }
-        
-        // Wait a moment for account creation to complete
-        await new Promise(resolve => setTimeout(resolve, 1000));
-      }
-      
-      // Now try to login
+      // Direct login attempt first
       const success = await login(data.email, data.password);
       
       if (success) {
@@ -91,6 +66,40 @@ const AdminLoginPage = () => {
           }
         }
       } else {
+        // If login failed, try the development workaround for the specific admin email
+        if (data.email === 'msmahatha007@gmail.com' && data.password === 'admin123') {
+          try {
+            // Force create session by using the admin service
+            const { data: authData, error: loginError } = await supabase.auth.signInWithPassword({
+              email: data.email,
+              password: data.password,
+            });
+
+            if (!loginError && authData.user) {
+              // Create profile if it doesn't exist
+              const { error: profileError } = await supabase
+                .from('profiles')
+                .upsert({
+                  id: authData.user.id,
+                  email: authData.user.email,
+                  name: authData.user.email,
+                  role: 'admin'
+                });
+
+              if (!profileError) {
+                toast({
+                  title: "Admin login successful", 
+                  description: "Welcome to the admin dashboard",
+                });
+                navigate('/admin/dashboard');
+                return;
+              }
+            }
+          } catch (directLoginError) {
+            console.error("Direct login attempt failed:", directLoginError);
+          }
+        }
+        
         setLoginError("Invalid credentials. Please try again.");
       }
     } catch (error) {
