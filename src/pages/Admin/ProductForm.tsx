@@ -19,7 +19,7 @@ import {
   Package, 
   Star 
 } from 'lucide-react';
-import { products as productsData } from '@/data/products';
+import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { categories } from '@/data/categories';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
@@ -65,48 +65,79 @@ const ProductForm = () => {
   });
 
   useEffect(() => {
-    if (isEditing) {
-      // Find the product with the matching ID
-      const product = productsData.find(p => p.id === id);
-      
-      if (product) {
-        // Calculate discount if salePrice exists
-        const discount = product.salePrice 
-          ? Math.round(((product.price - product.salePrice) / product.price) * 100) 
+    if (isEditing && id) {
+      const fetchProduct = async () => {
+        const { data: product, error } = await supabase
+          .from('products')
+          .select('*')
+          .eq('id', id)
+          .single();
+
+        if (error || !product) {
+          toast.error("Product not found");
+          navigate('/admin/products');
+          return;
+        }
+
+        // Calculate discount if sale_price exists
+        const discount = product.sale_price 
+          ? Math.round(((product.price - product.sale_price) / product.price) * 100) 
           : 0;
-          
+
         // Populate the form with product data
         form.reset({
           name: product.name,
-          description: product.description,
+          description: product.description || "",
           price: product.price,
-          image: product.image,
-          categoryId: product.categoryId,
+          image: product.image || "",
+          categoryId: product.category_id,
           stock: product.stock || 10,
           discount: discount,
           brand: product.brand || "",
           rating: product.rating || 4,
         });
-      } else {
-        toast.error("Product not found");
-        navigate('/admin/products');
-      }
-    }
-  }, [id, isEditing, navigate]);
+      };
 
-  const onSubmit = (data: ProductFormValues) => {
+      fetchProduct();
+    }
+  }, [id, isEditing, navigate, form]);
+
+  const onSubmit = async (data: ProductFormValues) => {
     setIsSubmitting(true);
     
     try {
-      // In a real application, you would send this data to your API
-      console.log("Product data to save:", data);
-      
-      setTimeout(() => {
-        toast.success(isEditing ? "Product updated successfully" : "Product created successfully");
-        navigate('/admin/products');
-      }, 1000);
-    } catch (error) {
-      toast.error("An error occurred");
+      const productData = {
+        name: data.name,
+        description: data.description,
+        price: data.price,
+        sale_price: data.discount > 0 ? data.price - (data.price * data.discount / 100) : null,
+        image: data.image,
+        category_id: data.categoryId,
+        stock: data.stock,
+        brand: data.brand || null,
+        rating: data.rating || 4,
+      };
+
+      if (isEditing && id) {
+        const { error } = await supabase
+          .from('products')
+          .update(productData)
+          .eq('id', id);
+
+        if (error) throw error;
+        toast.success("Product updated successfully");
+      } else {
+        const { error } = await supabase
+          .from('products')
+          .insert([productData]);
+
+        if (error) throw error;
+        toast.success("Product created successfully");
+      }
+
+      navigate('/admin/products');
+    } catch (error: any) {
+      toast.error(error.message || "An error occurred");
       console.error("Error saving product:", error);
     } finally {
       setIsSubmitting(false);

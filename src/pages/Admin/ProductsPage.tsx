@@ -1,34 +1,82 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Plus, Search, Edit, Trash, Package, FileText, Tag, Filter, SortAsc } from 'lucide-react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { products as productsData } from '@/data/products';
+import { supabase } from '@/integrations/supabase/client';
 import { Card } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { toast } from 'sonner';
 
+interface Product {
+  id: string;
+  name: string;
+  description: string;
+  price: number;
+  sale_price?: number;
+  image: string;
+  category_id: string;
+  stock: number;
+  brand?: string;
+  rating: number;
+}
+
 const ProductsPage = () => {
   const navigate = useNavigate();
-  const [products, setProducts] = useState(productsData);
+  const [products, setProducts] = useState<Product[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [productToDelete, setProductToDelete] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  // Fetch products from database
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('products')
+          .select('*')
+          .order('created_at', { ascending: false });
+
+        if (error) throw error;
+        setProducts(data || []);
+      } catch (error: any) {
+        toast.error('Failed to fetch products');
+        console.error('Error fetching products:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, []);
 
   // Filter products based on search term
   const filteredProducts = products.filter(product => 
     product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    (product.categoryId && product.categoryId.toLowerCase().includes(searchTerm.toLowerCase())) ||
+    (product.category_id && product.category_id.toLowerCase().includes(searchTerm.toLowerCase())) ||
     product.id.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const handleDeleteProduct = () => {
+  const handleDeleteProduct = async () => {
     if (productToDelete) {
-      // Remove product from local state
-      setProducts(products.filter(p => p.id !== productToDelete));
-      toast.success("Product deleted successfully");
-      setProductToDelete(null);
+      try {
+        const { error } = await supabase
+          .from('products')
+          .delete()
+          .eq('id', productToDelete);
+
+        if (error) throw error;
+
+        // Remove product from local state
+        setProducts(products.filter(p => p.id !== productToDelete));
+        toast.success("Product deleted successfully");
+        setProductToDelete(null);
+      } catch (error: any) {
+        toast.error('Failed to delete product');
+        console.error('Error deleting product:', error);
+      }
     }
   };
 
@@ -59,7 +107,14 @@ const ProductsPage = () => {
         </div>
       </Card>
       
-      {filteredProducts.length > 0 ? (
+      {loading ? (
+        <div className="flex justify-center py-12">
+          <div className="text-center">
+            <Package className="h-12 w-12 text-muted-foreground mb-4 mx-auto animate-pulse" />
+            <p className="text-muted-foreground">Loading products...</p>
+          </div>
+        </div>
+      ) : filteredProducts.length > 0 ? (
         <div className="rounded-md border overflow-hidden">
           <Table>
             <TableHeader>
@@ -85,10 +140,20 @@ const ProductsPage = () => {
                   </TableCell>
                   <TableCell className="font-medium">{product.name}</TableCell>
                   <TableCell>
-                    {/* Use the categories data to display the category name based on the categoryId */}
-                    {product.categoryId}
+                    {product.category_id}
                   </TableCell>
-                  <TableCell className="text-right">₹{product.price.toLocaleString('en-IN')}</TableCell>
+                  <TableCell className="text-right">
+                    <div className="flex items-center justify-end gap-2">
+                      {product.sale_price && (
+                        <span className="text-sm text-muted-foreground line-through">
+                          ₹{product.price.toLocaleString('en-IN')}
+                        </span>
+                      )}
+                      <span className="font-medium">
+                        ₹{(product.sale_price || product.price).toLocaleString('en-IN')}
+                      </span>
+                    </div>
+                  </TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end gap-2">
                       <Button 

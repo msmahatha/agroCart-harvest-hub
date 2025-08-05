@@ -47,6 +47,69 @@ export type Database = {
         }
         Relationships: []
       }
+      products: {
+        Row: {
+          brand: string | null
+          category_id: string
+          created_at: string
+          description: string | null
+          id: string
+          image: string | null
+          is_featured: boolean | null
+          is_organic: boolean | null
+          name: string
+          price: number
+          rating: number | null
+          review_count: number | null
+          sale_price: number | null
+          slug: string | null
+          specifications: Json | null
+          stock: number
+          tags: string[] | null
+          updated_at: string
+        }
+        Insert: {
+          brand?: string | null
+          category_id: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          image?: string | null
+          is_featured?: boolean | null
+          is_organic?: boolean | null
+          name: string
+          price: number
+          rating?: number | null
+          review_count?: number | null
+          sale_price?: number | null
+          slug?: string | null
+          specifications?: Json | null
+          stock?: number
+          tags?: string[] | null
+          updated_at?: string
+        }
+        Update: {
+          brand?: string | null
+          category_id?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          image?: string | null
+          is_featured?: boolean | null
+          is_organic?: boolean | null
+          name?: string
+          price?: number
+          rating?: number | null
+          review_count?: number | null
+          sale_price?: number | null
+          slug?: string | null
+          specifications?: Json | null
+          stock?: number
+          tags?: string[] | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string

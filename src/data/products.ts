@@ -15,7 +15,7 @@ export interface Product {
   tags?: string[];
   featured?: boolean;
   slug: string;
-  specifications?: { [key: string]: string };
+  specifications?: any;
 }
 
 export const products: Product[] = [
@@ -208,31 +208,174 @@ export const products: Product[] = [
   }
 ];
 
-export function getProductById(id: string): Product | undefined {
-  return products.find(product => product.id === id);
+import { supabase } from '@/integrations/supabase/client';
+
+export async function getProductById(id: string): Promise<Product | null> {
+  const { data, error } = await supabase
+    .from('products')
+    .select('*')
+    .eq('id', id)
+    .single();
+  
+  if (error || !data) return null;
+  
+  return {
+    id: data.id,
+    name: data.name,
+    description: data.description || '',
+    price: data.price,
+    salePrice: data.sale_price,
+    image: data.image || '',
+    categoryId: data.category_id,
+    stock: data.stock,
+    rating: data.rating,
+    reviewCount: data.review_count || 0,
+    featured: data.is_featured || false,
+    isOrganic: data.is_organic || false,
+    brand: data.brand,
+    tags: data.tags || [],
+    specifications: data.specifications || {},
+    slug: data.slug || ''
+  };
 }
 
-export function getProductBySlug(slug: string): Product | undefined {
-  return products.find(product => product.slug === slug);
+export async function getProductBySlug(slug: string): Promise<Product | null> {
+  const { data, error } = await supabase
+    .from('products')
+    .select('*')
+    .eq('slug', slug)
+    .single();
+  
+  if (error || !data) return null;
+  
+  return {
+    id: data.id,
+    name: data.name,
+    description: data.description || '',
+    price: data.price,
+    salePrice: data.sale_price,
+    image: data.image || '',
+    categoryId: data.category_id,
+    stock: data.stock,
+    rating: data.rating,
+    reviewCount: data.review_count || 0,
+    featured: data.is_featured || false,
+    isOrganic: data.is_organic || false,
+    brand: data.brand,
+    tags: data.tags || [],
+    specifications: data.specifications || {},
+    slug: data.slug || ''
+  };
 }
 
-export function getProductsByCategory(categoryId: string): Product[] {
-  return products.filter(product => product.categoryId === categoryId);
+export async function getProductsByCategory(categoryId: string): Promise<Product[]> {
+  const { data, error } = await supabase
+    .from('products')
+    .select('*')
+    .eq('category_id', categoryId);
+  
+  if (error || !data) return [];
+  
+  return data.map(item => ({
+    id: item.id,
+    name: item.name,
+    description: item.description || '',
+    price: item.price,
+    salePrice: item.sale_price,
+    image: item.image || '',
+    categoryId: item.category_id,
+    stock: item.stock,
+    rating: item.rating,
+    reviewCount: item.review_count || 0,
+    featured: item.is_featured || false,
+    isOrganic: item.is_organic || false,
+    brand: item.brand,
+    tags: item.tags || [],
+    specifications: item.specifications || {},
+    slug: item.slug || ''
+  }));
 }
 
-export function getFeaturedProducts(): Product[] {
-  return products.filter(product => product.featured);
+export async function getFeaturedProducts(): Promise<Product[]> {
+  const { data, error } = await supabase
+    .from('products')
+    .select('*')
+    .eq('is_featured', true);
+  
+  if (error || !data) return [];
+  
+  return data.map(item => ({
+    id: item.id,
+    name: item.name,
+    description: item.description || '',
+    price: item.price,
+    salePrice: item.sale_price,
+    image: item.image || '',
+    categoryId: item.category_id,
+    stock: item.stock,
+    rating: item.rating,
+    reviewCount: item.review_count || 0,
+    featured: item.is_featured || false,
+    isOrganic: item.is_organic || false,
+    brand: item.brand,
+    tags: item.tags || [],
+    specifications: item.specifications || {},
+    slug: item.slug || ''
+  }));
 }
 
-export function getOnSaleProducts(): Product[] {
-  return products.filter(product => product.salePrice !== undefined);
+export async function getOnSaleProducts(): Promise<Product[]> {
+  const { data, error } = await supabase
+    .from('products')
+    .select('*')
+    .not('sale_price', 'is', null);
+  
+  if (error || !data) return [];
+  
+  return data.map(item => ({
+    id: item.id,
+    name: item.name,
+    description: item.description || '',
+    price: item.price,
+    salePrice: item.sale_price,
+    image: item.image || '',
+    categoryId: item.category_id,
+    stock: item.stock,
+    rating: item.rating,
+    reviewCount: item.review_count || 0,
+    featured: item.is_featured || false,
+    isOrganic: item.is_organic || false,
+    brand: item.brand,
+    tags: item.tags || [],
+    specifications: item.specifications || {},
+    slug: item.slug || ''
+  }));
 }
 
-export function searchProducts(query: string): Product[] {
-  const lowercaseQuery = query.toLowerCase();
-  return products.filter(product => 
-    product.name.toLowerCase().includes(lowercaseQuery) || 
-    product.description.toLowerCase().includes(lowercaseQuery) ||
-    (product.tags && product.tags.some(tag => tag.toLowerCase().includes(lowercaseQuery)))
-  );
+export async function searchProducts(query: string): Promise<Product[]> {
+  const { data, error } = await supabase
+    .from('products')
+    .select('*')
+    .or(`name.ilike.%${query}%,description.ilike.%${query}%,tags.cs.{${query}}`);
+  
+  if (error || !data) return [];
+  
+  return data.map(item => ({
+    id: item.id,
+    name: item.name,
+    description: item.description || '',
+    price: item.price,
+    salePrice: item.sale_price,
+    image: item.image || '',
+    categoryId: item.category_id,
+    stock: item.stock,
+    rating: item.rating,
+    reviewCount: item.review_count || 0,
+    featured: item.is_featured || false,
+    isOrganic: item.is_organic || false,
+    brand: item.brand,
+    tags: item.tags || [],
+    specifications: item.specifications || {},
+    slug: item.slug || ''
+  }));
 }
